@@ -28,10 +28,10 @@ space.gravity = (0, -60)
 window = pyglet.window.Window(round(WIDTH * PIXEL_SCALE), round(HEIGHT * PIXEL_SCALE))
 
 
-
-pc = pyglet.sprite.Sprite(
-    pyglet.resource.image('sprites/jumper.png')
-)
+img = pyglet.resource.image('sprites/jumper.png')
+img.anchor_x = img.width // 2
+img.anchor_y = img.height // 2
+pc = pyglet.sprite.Sprite(img)
 pc.position = 400, 300
 
 
@@ -81,7 +81,8 @@ def on_draw():
 
 rt3_2 = 3 ** 0.5 / 2
 
-class Direction(Enum):
+
+class DirectionLR(Enum):
     """The six cardinal directions for the jumps."""
 
     L = Vec2d(-1, 0)
@@ -92,20 +93,51 @@ class Direction(Enum):
     DR = Vec2d(0.5, -rt3_2)
 
 
-INPUT_TO_JUMP = {
-    key.Q: Direction.UL,
-    key.A: Direction.L,
-    key.Z: Direction.DL,
-    key.E: Direction.UR,
-    key.D: Direction.R,
-    key.C: Direction.DR,
+class Direction(Enum):
+    """The six cardinal directions for the jumps."""
+
+    UL = Vec2d(-rt3_2, 0.5)
+    U = Vec2d(0, 1)
+    UR = Vec2d(rt3_2, 0.5)
+    DL = Vec2d(-rt3_2, -0.5)
+    D = Vec2d(0, -1)
+    DR = Vec2d(rt3_2, -0.5)
+
+
+# Input scheme for LR directions
+INPUT_TO_JUMP_LR = {
+    key.Q: DirectionLR.UL,
+    key.A: DirectionLR.L,
+    key.Z: DirectionLR.DL,
+    key.E: DirectionLR.UR,
+    key.D: DirectionLR.R,
+    key.C: DirectionLR.DR,
 
     # Cursors are L/R + mod
+    (key.LEFT, key.UP): DirectionLR.UL,
+    (key.LEFT, None): DirectionLR.L,
+    (key.LEFT, key.DOWN): DirectionLR.DL,
+    (key.RIGHT, key.UP): DirectionLR.UR,
+    (key.RIGHT, None): DirectionLR.R,
+    (key.RIGHT, key.DOWN): DirectionLR.DR,
+}
+
+
+# Input scheme for UD directions
+INPUT_TO_JUMP = {
+    key.Q: Direction.UL,
+    key.W: Direction.U,
+    key.E: Direction.UR,
+    key.A: Direction.DL,
+    key.S: Direction.D,
+    key.D: Direction.DR,
+
+    # Cursors are mod + U/D
     (key.LEFT, key.UP): Direction.UL,
-    (key.LEFT, None): Direction.L,
-    (key.LEFT, key.DOWN): Direction.DL,
+    (None, key.UP): Direction.U,
     (key.RIGHT, key.UP): Direction.UR,
-    (key.RIGHT, None): Direction.R,
+    (key.LEFT, key.DOWN): Direction.DL,
+    (None, key.DOWN): Direction.D,
     (key.RIGHT, key.DOWN): Direction.DR,
 }
 
@@ -114,25 +146,24 @@ keys_down = key.KeyStateHandler()
 window.push_handlers(keys_down)
 
 
-JUMP_IMPULSE = 40
+JUMP_IMPULSE = 200
 
 
 def jump(direction):
-    body.velocity = direction.value * JUMP_IMPULSE
-    #body.apply_impulse_at_local_point(direction.value * JUMP_IMPULSE)
+    body.apply_impulse_at_local_point(direction.value * JUMP_IMPULSE)
 
 
 @window.event
 def on_key_press(symbol, modifiers):
     if symbol in INPUT_TO_JUMP:
         jump(INPUT_TO_JUMP[symbol])
-    elif symbol in (key.LEFT, key.RIGHT):
+    elif symbol in (key.UP, key.DOWN):
         mod = None
-        if keys_down[key.UP]:
-            mod = key.UP
-        elif keys_down[key.DOWN]:
-            mod = key.DOWN
-        k = (symbol, mod)
+        if keys_down[key.LEFT]:
+            mod = key.LEFT
+        elif keys_down[key.RIGHT]:
+            mod = key.RIGHT
+        k = (mod, symbol)
         if k in INPUT_TO_JUMP:
             jump(INPUT_TO_JUMP[k])
 
