@@ -30,8 +30,9 @@ pyglet.resource.reindex()
 SPACE_SCALE = 1 / 64
 
 
-GRAVITY = Vec2d(0, -60)
+GRAVITY = Vec2d(0, -50)
 BUOYANCY = Vec2d(0, 500)
+WATER_DRAG = 20
 
 space = pymunk.Space()
 space.gravity = GRAVITY
@@ -69,7 +70,7 @@ def create_platform(x, y):
         space.static_body,
         x, y, 3,1
     )
-    shape.friction = 0.4
+    shape.friction = 0.6
     shape.elasticity = 0.6
     space.add(shape)
 
@@ -103,7 +104,7 @@ def create_walls(space):
         a = Vec2d(*a) * SPACE_SCALE
         b = Vec2d(*b) * SPACE_SCALE
         shape = pymunk.Segment(space.static_body, a, b, 10 * SPACE_SCALE)
-        shape.friction = 1
+        shape.friction = 0
         shape.elasticity = 0.6
         space.add(shape)
 
@@ -123,15 +124,9 @@ def create_pc(x, y):
         w=pc.width * SPACE_SCALE,
         h=(pc.height - 5) * SPACE_SCALE,
     )
-    shape.friction = 0.4
-    shape.elasticity = 0.6
+    shape.friction = 0.8
+    shape.elasticity = 0.2
     space.add(pc_body, shape)
-
-
-create_pc(6, 4)
-create_platform(-1, 4)
-create_platform(5, 3)
-create_walls(space)
 
 
 class Water:
@@ -148,7 +143,7 @@ class Water:
     water_batch = pyglet.graphics.Batch()
     group = WaterGroup()
 
-    CONV = np.array([0.1, 0.3, -0.8, 0.3, 0.1])
+    CONV = np.array([0.3, -0.8, 0.3])
 
     SUBDIV = 5
 
@@ -186,9 +181,9 @@ class Water:
             self.CONV,
             'same',
         )
-        self.velocities *= 0.5 ** dt  # damp
+        self.velocities *= 0.8 ** dt  # damp
         self.levels += self.velocities * 10 * dt  # apply velocity
-        self.levels *= 0.9 ** dt
+        self.levels *= 0.95 ** dt
 
         verts = np.dstack((
             self.xs,
@@ -208,6 +203,7 @@ class Water:
         cls.water_batch.draw()
 
     def pre_solve(arbiter, space, data):
+        dt = space.current_time_step
         water, actor = arbiter.shapes
         body = actor.body
         if not body:
@@ -226,9 +222,13 @@ class Water:
             0, 1
         )))
         if frac_immersed < 1:
-            inst.velocities[l:r] += body.velocity.y * 0.003
+            f = 0.8 ** dt
+            inst.velocities[l:r] = (
+                inst.velocities[l:r] * f +
+                body.velocity.y * abs(body.velocity.y) * 0.1 * (1.0 - f)
+            )
 
-        force = (BUOYANCY * bb.area() - body.velocity * 10) * frac_immersed
+        force = (BUOYANCY * bb.area() - body.velocity * WATER_DRAG) * frac_immersed
         body.apply_force_at_local_point(
             force,
             body.center_of_gravity,
@@ -240,9 +240,14 @@ class Water:
 
 
 
-w = Water(3.5)
 
-
+create_pc(6, 7)
+create_platform(-1, 7)
+create_platform(5, 6)
+create_platform(5, 17)
+create_platform(13, 9)
+create_walls(space)
+w = Water(6.5)
 pyglet.clock.schedule_interval(w.update, 1 / 60)
 
 
@@ -302,14 +307,14 @@ INPUT_TO_JUMP_LR = {
 
 
 
-IMPULSE_SCALE = 140
+IMPULSE_SCALE = 26
 JUMP_IMPULSES = {
     Direction.UL: Vec2d.unit().rotated_degrees(30) * IMPULSE_SCALE,
     Direction.U: Vec2d.unit() * IMPULSE_SCALE,
     Direction.UR: Vec2d.unit().rotated_degrees(-30) * IMPULSE_SCALE,
-    Direction.DL: Vec2d.unit().rotated_degrees(180 - 45) * IMPULSE_SCALE,
+    Direction.DL: Vec2d.unit().rotated_degrees(180 - 30) * IMPULSE_SCALE,
     Direction.D: Vec2d.unit().rotated_degrees(180) * IMPULSE_SCALE,
-    Direction.DR: Vec2d.unit().rotated_degrees(180 + 45) * IMPULSE_SCALE,
+    Direction.DR: Vec2d.unit().rotated_degrees(180 + 30) * IMPULSE_SCALE,
 }
 
 
@@ -337,7 +342,7 @@ window.push_handlers(keys_down)
 
 
 def jump(direction):
-    pc_body.apply_impulse_at_local_point(JUMP_IMPULSES[direction])
+    pc_body.velocity = JUMP_IMPULSES[direction]
 
 
 @window.event
