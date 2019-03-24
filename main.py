@@ -1,15 +1,16 @@
 from enum import Enum
 from math import sin
+import pathlib
+import random
+import datetime
+from itertools import count
 
 import pyglet
 from pyglet import gl
 from pyglet.window import key
-from pyglet.graphics import Batch
-from pyglet.event import EVENT_UNHANDLED, EVENT_HANDLED
 import pyglet.sprite
 import pyglet.resource
 import pymunk
-import random
 from pymunk.vec2d import Vec2d
 
 import numpy as np
@@ -184,8 +185,6 @@ class Frog:
         self.shape.elasticity = 0.2
 
         space.add(self.body, self.shape)
-        pyglet.clock.schedule_interval(self.update, 1 / 60)
-
         self.tongue = None
 
     def lick(self, pos):
@@ -232,7 +231,8 @@ class Water:
     water_batch = pyglet.graphics.Batch()
     group = WaterGroup()
 
-    CONV = np.array([0.3, -0.8, 0.3])
+    VCONV = np.array([0.05, 0.3, -0.8, 0.3, 0.05])
+    LCONV = np.array([0.05, 0.9, 0.05])
 
     SUBDIV = 5
 
@@ -267,12 +267,16 @@ class Water:
     def update(self, dt):
         self.velocities += np.convolve(
             self.levels,
-            self.CONV,
+            self.VCONV * (dt * 60),
             'same',
         )
-        self.velocities *= 0.8 ** dt  # damp
-        self.levels += self.velocities * 10 * dt  # apply velocity
-        self.levels *= 0.95 ** dt
+        self.velocities *= 0.5 ** dt  # damp
+        self.levels = np.convolve(
+            self.levels,
+            self.LCONV,
+            'same'
+        ) + self.velocities * 10 * dt  # apply velocity
+        self.levels *= 0.8 ** dt
 
         verts = np.dstack((
             self.xs,
@@ -300,20 +304,19 @@ class Water:
 
         inst = water.water
 
-        water_y = inst.y
         bb = actor.cache_bb()
 
-        l = round(bb.left - inst.x1) * inst.SUBDIV
-        r = round(bb.right - inst.x1) * inst.SUBDIV
-        levels = inst.levels[l:r] + inst.y
+        a = round(bb.left - inst.x1) * inst.SUBDIV
+        b = round(bb.right - inst.x1) * inst.SUBDIV
+        levels = inst.levels[a:b] + inst.y
         frac_immersed = float(np.mean(np.clip(
             (levels - bb.bottom) / (bb.top - bb.bottom),
             0, 1
         )))
         if frac_immersed < 1:
-            f = 0.8 ** dt
-            inst.velocities[l:r] = (
-                inst.velocities[l:r] * f +
+            f = 0.6 ** dt
+            inst.velocities[a:b] = (
+                inst.velocities[a:b] * f +
                 body.velocity.y * abs(body.velocity.y) * 0.1 * (1.0 - f)
             )
 
@@ -343,26 +346,26 @@ class Fly:
             batch=sprites,
             usage='stream'
         )
+        self.sprite.position = phys_to_screen(self.pos)
 
         self.shape = pymunk.Circle(space.static_body, self.CATCH_RADIUS, offset=(x, y))
         self.shape.collision_type = COLLISION_TYPE_COLLECTIBLE
         self.shape.obj = self
         space.add(self.shape)
-
-        pyglet.clock.schedule_interval(self.update, 1 / 20)
         self.update(random.uniform(0, 5))
 
     def update(self, dt):
         self.t += dt
         self.sprite._scale_y *= -1
         self.sprite._rotation = 10 * sin(self.t)
-        self.sprite._x, self.sprite._y= phys_to_screen(
+        self.sprite._x, self.sprite._y = phys_to_screen(
             self.pos
             + Vec2d(0.5 * sin(2 * self.t), 0.5 * sin(3 * self.t))  # lissajous wander
         )
         self.sprite._update_position()
 
     def collect(self):
+        flies.remove(self)
         self.sprite.delete()
         space.remove(self.shape)
         pyglet.clock.unschedule(self.update)
@@ -387,8 +390,10 @@ create_platform(5, 6)
 create_platform(5, 17)
 create_platform(13, 9)
 create_walls(space)
-w = Water(6.5)
-pyglet.clock.schedule_interval(w.update, 1 / 60)
+
+water = [
+    Water(6.5),
+]
 
 flies = [
     Fly(3, 10),
@@ -398,14 +403,22 @@ flies = [
 
 fps_display = pyglet.clock.ClockDisplay()
 
+
 @window.event
 def on_draw():
     window.clear()
     gl.glLoadIdentity()
     gl.glScalef(PIXEL_SCALE, PIXEL_SCALE, 1)
 
+    dt = 1 / 60
+    pc.update(dt)
+    for f in flies:
+        f.update(dt)
+
     sprites.draw()
-    w.draw()
+    for w in water:
+        w.update(dt)
+        w.draw()
     fps_display.draw()
 
 
@@ -492,6 +505,18 @@ def jump(direction):
     pc.body.velocity = JUMP_IMPULSES[direction]
 
 
+def screenshot_path(comp_start=datetime.date(2019, 3, 24)):
+    """Get a path to save a screenshot into."""
+    today = datetime.date.today()
+    comp_day = (today - comp_start).days + 1
+    grabs = pathlib.Path('grabs')
+
+    for n in count(1):
+        p = grabs / f'day{comp_day}-{n}.png'
+        if not p.exists():
+            return str(p)
+
+
 @window.event
 def on_key_press(symbol, modifiers):
     if symbol in INPUT_TO_JUMP:
@@ -506,6 +531,19 @@ def on_key_press(symbol, modifiers):
         if k in INPUT_TO_JUMP:
             jump(INPUT_TO_JUMP[k])
 
+    if symbol == key.F12:
+        # disable transfer alpha channel
+        gl.glPixelTransferf(gl.GL_ALPHA_BIAS, 1.0)
+        image = pyglet.image.ColorBufferImage(
+            0,
+            0,
+            window.width,
+            window.height
+        )
+        image.save(screenshot_path())
+        # re-enable alpha channel transfer
+        gl.glPixelTransferf(gl.GL_ALPHA_BIAS, 0.0)
+
     keys_down.on_key_press(symbol, modifiers)
 
 
@@ -513,6 +551,7 @@ def update_physics(dt):
     for _ in range(3):
         space.step(1 / 180)
 
-pyglet.clock.schedule_interval(update_physics, 1 / 60)
+pyglet.clock.set_fps_limit(60)
+pyglet.clock.schedule(update_physics)
 pyglet.app.run()
 
