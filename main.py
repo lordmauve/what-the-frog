@@ -3,11 +3,15 @@ from enum import Enum
 import pyglet
 from pyglet import gl
 from pyglet.window import key
+from pyglet.graphics import Batch
 from pyglet.event import EVENT_UNHANDLED, EVENT_HANDLED
 import pyglet.sprite
 import pyglet.resource
 import pymunk
+import random
 from pymunk.vec2d import Vec2d
+
+import numpy as np
 
 
 WIDTH = 1600   # Width in hidpi pixels
@@ -22,20 +26,70 @@ pyglet.resource.path = [
 pyglet.resource.reindex()
 
 
+# Space units are 64 screen pixels
+SPACE_SCALE = 1 / 64
+
+
+GRAVITY = Vec2d(0, -60)
+BUOYANCY = Vec2d(0, 500)
+
 space = pymunk.Space()
-space.gravity = (0, -60)
+space.gravity = GRAVITY
 
 window = pyglet.window.Window(round(WIDTH * PIXEL_SCALE), round(HEIGHT * PIXEL_SCALE))
 
 
-img = pyglet.resource.image('sprites/jumper.png')
-img.anchor_x = img.width // 2
-img.anchor_y = img.height // 2
-pc = pyglet.sprite.Sprite(img)
-pc.position = 400, 300
+sprites = pyglet.graphics.Batch()
+
+platform = pyglet.resource.image('sprites/platform.png')
+platforms = []
 
 
-SPACE_SCALE = 1 / 30
+# Collision types for callbacks
+COLLISION_TYPE_WATER = 1
+
+
+def phys_to_screen(v, v2=None):
+    if v2:
+        return Vec2d(v, v2) / SPACE_SCALE
+    return Vec2d(*v) / SPACE_SCALE
+
+
+def create_platform(x, y):
+    """Create a platform.
+
+    Here x and y are in physics coordinates.
+
+    """
+    s = pyglet.sprite.Sprite(platform, batch=sprites)
+    s.position = phys_to_screen(x, y)
+    platforms.append(s)
+
+    shape = box(
+        space.static_body,
+        x, y, 3,1
+    )
+    shape.friction = 0.4
+    shape.elasticity = 0.6
+    space.add(shape)
+
+
+def box(body, x, y, w, h):
+    """Create a pymunk box."""
+    bl = Vec2d(x, y)
+    w = Vec2d(w, 0)
+    h = Vec2d(0, h)
+    shape = pymunk.Poly(
+        body,
+        [
+            bl,
+            bl + w,
+            bl + w + h,
+            bl + h,
+        ]
+    )
+    return shape
+
 
 
 def create_walls(space):
@@ -54,19 +108,142 @@ def create_walls(space):
         space.add(shape)
 
 
+def create_pc(x, y):
+    global pc, pc_body
+    img = pyglet.resource.image('sprites/jumper.png')
+    #img.anchor_x = img.width // 2
+    img.anchor_y = 5
+    pc = pyglet.sprite.Sprite(img, batch=sprites)
+    pc.position = phys_to_screen(x, y)
+    pc_body = pymunk.Body(5, pymunk.inf)
+    pc_body.position = (x, y)
+    shape = box(
+        pc_body,
+        0, 0,
+        w=pc.width * SPACE_SCALE,
+        h=(pc.height - 5) * SPACE_SCALE,
+    )
+    shape.friction = 0.4
+    shape.elasticity = 0.6
+    space.add(pc_body, shape)
 
+
+create_pc(6, 4)
+create_platform(-1, 4)
+create_platform(5, 3)
 create_walls(space)
 
 
-body = pymunk.Body(5, pymunk.inf)
-body.position = Vec2d(400, 300) * SPACE_SCALE
-shape = pymunk.Poly.create_box(
-    body,
-    size=Vec2d(pc.width, pc.height) * SPACE_SCALE
-)
-shape.friction = 0.4
-shape.elasticity = 0.6
-space.add(body, shape)
+class Water:
+    class WaterGroup(pyglet.graphics.Group):
+        def set_state(self):
+            gl.glEnable(gl.GL_BLEND)
+            gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
+            gl.glColor4f(0.3, 0.5, 0.9, 0.3)
+
+        def unset_state(self):
+            gl.glColor4f(1, 1, 1, 1)
+            gl.glDisable(gl.GL_BLEND)
+
+    water_batch = pyglet.graphics.Batch()
+    group = WaterGroup()
+
+    CONV = np.array([0.1, 0.3, -0.8, 0.3, 0.1])
+
+    SUBDIV = 5
+
+    def __init__(self, surf_y, x1=0, x2=WIDTH * SPACE_SCALE, bot_y=-1000):
+        self.y = surf_y
+        self.x1 = x1
+        self.x2 = x2
+
+        self.shape = box(
+            space.static_body,
+            x=x1,
+            y=bot_y,
+            w=x2 - x1,
+            h=surf_y - bot_y
+        )
+        self.shape.water = self
+        self.shape.collision_type = COLLISION_TYPE_WATER
+        space.add(self.shape)
+
+        size = int(x2 - x1) * self.SUBDIV + 1
+        self.xs = np.linspace(x1, x2, size)
+        self.velocities = np.zeros(size)
+        self.levels = np.zeros(size)
+        self.bot_verts = np.ones(size) * bot_y
+        self.dl = self.water_batch.add(
+            size * 2,
+            gl.GL_TRIANGLE_STRIP,
+            self.group,
+            'v2f/stream'
+        )
+
+    def update(self, dt):
+        self.velocities += np.convolve(
+            self.levels,
+            self.CONV,
+            'same',
+        )
+        self.velocities *= 0.5 ** dt  # damp
+        self.levels += self.velocities * 10 * dt  # apply velocity
+        self.levels *= 0.9 ** dt
+
+        verts = np.dstack((
+            self.xs,
+            self.levels + self.y,
+            self.xs,
+            self.bot_verts,
+        )) / SPACE_SCALE
+
+        self.dl.vertices = np.reshape(verts, (-1, 1))
+
+    def drip(self, _):
+        self.levels[-9] = -0.5
+        self.velocities[-9] = 0
+
+    @classmethod
+    def draw(cls):
+        cls.water_batch.draw()
+
+    def pre_solve(arbiter, space, data):
+        water, actor = arbiter.shapes
+        body = actor.body
+        if not body:
+            return False
+
+        inst = water.water
+
+        water_y = inst.y
+        bb = actor.cache_bb()
+
+        l = round(bb.left - inst.x1) * inst.SUBDIV
+        r = round(bb.right - inst.x1) * inst.SUBDIV
+        levels = inst.levels[l:r] + inst.y
+        frac_immersed = float(np.mean(np.clip(
+            (levels - bb.bottom) / (bb.top - bb.bottom),
+            0, 1
+        )))
+        if frac_immersed < 1:
+            inst.velocities[l:r] += body.velocity.y * 0.003
+
+        force = (BUOYANCY * bb.area() - body.velocity * 10) * frac_immersed
+        body.apply_force_at_local_point(
+            force,
+            body.center_of_gravity,
+        )
+        return False
+
+    handler = space.add_wildcard_collision_handler(COLLISION_TYPE_WATER)
+    handler.pre_solve = pre_solve
+
+
+
+w = Water(3.5)
+
+
+pyglet.clock.schedule_interval(w.update, 1 / 60)
 
 
 @window.event
@@ -75,8 +252,9 @@ def on_draw():
     gl.glLoadIdentity()
     gl.glScalef(PIXEL_SCALE, PIXEL_SCALE, 1)
 
-    pc.position = body.position / SPACE_SCALE
-    pc.draw()
+    pc.position = pc_body.position / SPACE_SCALE
+    sprites.draw()
+    w.draw()
 
 
 rt3_2 = 3 ** 0.5 / 2
@@ -123,6 +301,18 @@ INPUT_TO_JUMP_LR = {
 }
 
 
+
+IMPULSE_SCALE = 140
+JUMP_IMPULSES = {
+    Direction.UL: Vec2d.unit().rotated_degrees(30) * IMPULSE_SCALE,
+    Direction.U: Vec2d.unit() * IMPULSE_SCALE,
+    Direction.UR: Vec2d.unit().rotated_degrees(-30) * IMPULSE_SCALE,
+    Direction.DL: Vec2d.unit().rotated_degrees(180 - 45) * IMPULSE_SCALE,
+    Direction.D: Vec2d.unit().rotated_degrees(180) * IMPULSE_SCALE,
+    Direction.DR: Vec2d.unit().rotated_degrees(180 + 45) * IMPULSE_SCALE,
+}
+
+
 # Input scheme for UD directions
 INPUT_TO_JUMP = {
     key.Q: Direction.UL,
@@ -146,11 +336,8 @@ keys_down = key.KeyStateHandler()
 window.push_handlers(keys_down)
 
 
-JUMP_IMPULSE = 200
-
-
 def jump(direction):
-    body.apply_impulse_at_local_point(direction.value * JUMP_IMPULSE)
+    pc_body.apply_impulse_at_local_point(JUMP_IMPULSES[direction])
 
 
 @window.event

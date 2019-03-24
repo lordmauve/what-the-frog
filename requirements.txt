@@ -1,2 +1,3 @@
-pyglet==1.3.2
-pymunk==5.4.2
+pyglet~=1.3.2
+pymunk~=5.4.2
+numpy~=1.16.2
