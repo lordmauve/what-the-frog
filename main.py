@@ -1,4 +1,5 @@
 from enum import Enum
+from math import sin
 
 import pyglet
 from pyglet import gl
@@ -48,6 +49,8 @@ platforms = []
 
 # Collision types for callbacks
 COLLISION_TYPE_WATER = 1
+COLLISION_TYPE_COLLECTIBLE = 2
+COLLISION_TYPE_FROG = 3
 
 
 def phys_to_screen(v, v2=None):
@@ -55,6 +58,11 @@ def phys_to_screen(v, v2=None):
         return Vec2d(v, v2) / SPACE_SCALE
     return Vec2d(*v) / SPACE_SCALE
 
+
+def screen_to_phys(v, v2=None):
+    if v2:
+        return Vec2d(v, v2) * SPACE_SCALE
+    return Vec2d(*v) * SPACE_SCALE
 
 def create_platform(x, y):
     """Create a platform.
@@ -109,24 +117,105 @@ def create_walls(space):
         space.add(shape)
 
 
-def create_pc(x, y):
-    global pc, pc_body
-    img = pyglet.resource.image('sprites/jumper.png')
-    #img.anchor_x = img.width // 2
-    img.anchor_y = 5
-    pc = pyglet.sprite.Sprite(img, batch=sprites)
-    pc.position = phys_to_screen(x, y)
-    pc_body = pymunk.Body(5, pymunk.inf)
-    pc_body.position = (x, y)
-    shape = box(
-        pc_body,
-        0, 0,
-        w=pc.width * SPACE_SCALE,
-        h=(pc.height - 5) * SPACE_SCALE,
+class Tongue:
+    TEX = pyglet.resource.texture('sprites/tongue.png')
+    ordering = pyglet.graphics.OrderedGroup(1)
+    group = pyglet.sprite.SpriteGroup(
+        TEX,
+        gl.GL_SRC_ALPHA,
+        gl.GL_ONE_MINUS_SRC_ALPHA,
+        parent=ordering
     )
-    shape.friction = 0.8
-    shape.elasticity = 0.2
-    space.add(pc_body, shape)
+
+    def __init__(self, mouth_pos, fly_pos):
+        self.mouth_pos = mouth_pos
+        self.fly_pos = fly_pos
+        self.length = 0
+
+        self.dl = sprites.add(
+            4,
+            gl.GL_QUADS,
+            self.group,
+            'v2f/stream',
+            't3f/static',
+        )
+        self.dl.tex_coords = self.TEX.tex_coords
+        self.recalc_verts()
+
+    def recalc_verts(self):
+        """Recalculate the vertices from current fly and mouth pos."""
+        tongue_w = self.TEX.height
+
+        along = self.fly_pos - self.mouth_pos
+        across = along.normalized().rotated(90) * tongue_w * 0.5
+
+        along *= self.length
+
+        self.dl.vertices = [c for v in [
+            self.mouth_pos - across,
+            self.mouth_pos - across + along,
+            self.mouth_pos + across + along,
+            self.mouth_pos + across,
+        ] for c in v]
+
+    def delete(self):
+        self.dl.delete()
+
+
+class Frog:
+    SPRITE = pyglet.resource.image('sprites/jumper.png')
+    #img.anchor_x = img.width // 2
+    SPRITE.anchor_y = 5
+
+    def __init__(self, x, y):
+        self.sprite = pyglet.sprite.Sprite(self.SPRITE, batch=sprites)
+        self.sprite.position = phys_to_screen(x, y)
+        self.body = pymunk.Body(5, pymunk.inf)
+        self.body.position = (x, y)
+        self.shape = box(
+            self.body,
+            0, 0,
+            w=self.SPRITE.width * SPACE_SCALE,
+            h=(self.SPRITE.height - 5) * SPACE_SCALE,
+        )
+        self.shape.obj = self
+        self.shape.collision_type = COLLISION_TYPE_FROG
+        self.shape.friction = 0.8
+        self.shape.elasticity = 0.2
+
+        space.add(self.body, self.shape)
+        pyglet.clock.schedule_interval(self.update, 1 / 60)
+
+        self.tongue = None
+
+    def lick(self, pos):
+        if self.tongue:
+            self.tongue.fly_pos = pos
+            self.tongue.length = 0
+            self.tongue.t = 0
+            pyglet.clock.unschedule(self._stop_lick)
+        else:
+            self.tongue = Tongue(self.mouth_pos, pos)
+            self.tongue.t = 0
+
+    @property
+    def mouth_pos(self):
+        return Vec2d(*self.sprite.position) + Vec2d(32, 20)
+
+    def update(self, dt):
+        self.sprite.position = self.body.position / SPACE_SCALE
+
+        # Update the tongue
+        if self.tongue:
+            self.tongue.t += dt
+            t = self.tongue.t
+            if t >= 0.1:
+                self.tongue.delete()
+                self.tongue = None
+            else:
+                self.tongue.length = 400 * t * (0.1 - t)
+                self.tongue.mouth_pos = self.mouth_pos
+                self.tongue.recalc_verts()
 
 
 class Water:
@@ -239,9 +328,60 @@ class Water:
     handler.pre_solve = pre_solve
 
 
+class Fly:
+    SPRITE = pyglet.resource.image('sprites/fly.png')
+    SPRITE.anchor_x = SPRITE.width // 2
+    SPRITE.anchor_y = SPRITE.height // 3
+
+    CATCH_RADIUS = 2.5
+
+    def __init__(self, x, y):
+        self.pos = Vec2d(x + 0.5, y + 0.5)
+        self.t = 0
+        self.sprite = pyglet.sprite.Sprite(
+            self.SPRITE,
+            batch=sprites,
+            usage='stream'
+        )
+
+        self.shape = pymunk.Circle(space.static_body, self.CATCH_RADIUS, offset=(x, y))
+        self.shape.collision_type = COLLISION_TYPE_COLLECTIBLE
+        self.shape.obj = self
+        space.add(self.shape)
+
+        pyglet.clock.schedule_interval(self.update, 1 / 20)
+        self.update(random.uniform(0, 5))
+
+    def update(self, dt):
+        self.t += dt
+        self.sprite._scale_y *= -1
+        self.sprite._rotation = 10 * sin(self.t)
+        self.sprite._x, self.sprite._y= phys_to_screen(
+            self.pos
+            + Vec2d(0.5 * sin(2 * self.t), 0.5 * sin(3 * self.t))  # lissajous wander
+        )
+        self.sprite._update_position()
+
+    def collect(self):
+        self.sprite.delete()
+        space.remove(self.shape)
+        pyglet.clock.unschedule(self.update)
 
 
-create_pc(6, 7)
+def on_collect(arbiter, space, data):
+    """Called when a collectible is hit"""
+    fly, frog = arbiter.shapes
+    frog.obj.lick(fly.obj.sprite.position)
+    fly.obj.collect()
+    space.remove(fly)
+    return False
+
+
+handler = space.add_collision_handler(COLLISION_TYPE_COLLECTIBLE, COLLISION_TYPE_FROG)
+handler.begin = on_collect
+
+
+pc = Frog(6, 7)
 create_platform(-1, 7)
 create_platform(5, 6)
 create_platform(5, 17)
@@ -250,6 +390,13 @@ create_walls(space)
 w = Water(6.5)
 pyglet.clock.schedule_interval(w.update, 1 / 60)
 
+flies = [
+    Fly(3, 10),
+    Fly(16, 16),
+]
+
+
+fps_display = pyglet.clock.ClockDisplay()
 
 @window.event
 def on_draw():
@@ -257,9 +404,9 @@ def on_draw():
     gl.glLoadIdentity()
     gl.glScalef(PIXEL_SCALE, PIXEL_SCALE, 1)
 
-    pc.position = pc_body.position / SPACE_SCALE
     sprites.draw()
     w.draw()
+    fps_display.draw()
 
 
 rt3_2 = 3 ** 0.5 / 2
@@ -342,7 +489,7 @@ window.push_handlers(keys_down)
 
 
 def jump(direction):
-    pc_body.velocity = JUMP_IMPULSES[direction]
+    pc.body.velocity = JUMP_IMPULSES[direction]
 
 
 @window.event
