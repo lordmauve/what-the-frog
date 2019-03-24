@@ -12,6 +12,7 @@ import pyglet.sprite
 import pyglet.resource
 import pymunk
 from pymunk.vec2d import Vec2d
+import moderngl
 
 import numpy as np
 
@@ -42,6 +43,8 @@ space.gravity = GRAVITY
 window = pyglet.window.Window(round(WIDTH * PIXEL_SCALE), round(HEIGHT * PIXEL_SCALE))
 
 
+mgl = moderngl.create_context()
+
 sprites = pyglet.graphics.Batch()
 
 platform = pyglet.resource.image('sprites/platform.png')
@@ -64,6 +67,7 @@ def screen_to_phys(v, v2=None):
     if v2:
         return Vec2d(v, v2) * SPACE_SCALE
     return Vec2d(*v) * SPACE_SCALE
+
 
 def create_platform(x, y):
     """Create a platform.
@@ -236,7 +240,7 @@ class Water:
 
     SUBDIV = 5
 
-    def __init__(self, surf_y, x1=0, x2=WIDTH * SPACE_SCALE, bot_y=-1000):
+    def __init__(self, surf_y, x1=0, x2=WIDTH * SPACE_SCALE, bot_y=0):
         self.y = surf_y
         self.x1 = x1
         self.x2 = x2
@@ -276,16 +280,15 @@ class Water:
             self.LCONV,
             'same'
         ) + self.velocities * 10 * dt  # apply velocity
-        self.levels *= 0.8 ** dt
 
         verts = np.dstack((
             self.xs,
             self.levels + self.y,
             self.xs,
             self.bot_verts,
-        )) / SPACE_SCALE
-
-        self.dl.vertices = np.reshape(verts, (-1, 1))
+        ))
+        self.vertices = verts
+        #self.dl.vertices = np.reshape(verts, (-1, 1))
 
     def drip(self, _):
         self.levels[-9] = -0.5
@@ -404,21 +407,170 @@ flies = [
 fps_display = pyglet.clock.ClockDisplay()
 
 
+size = (WIDTH, HEIGHT)
+fbuf = mgl.framebuffer(
+    [mgl.texture(size, components=3)],
+    mgl.depth_renderbuffer(size)
+)
+lights = mgl.simple_framebuffer((WIDTH, HEIGHT))
+
+
+lights_shader = mgl.program(
+    vertex_shader='''
+        #version 130
+
+        in vec2 vert;
+
+        varying vec2 uv;
+
+        void main() {
+            gl_Position = vec4(vert, 0.0, 1.0);
+            uv = (vert + vec2(1, 1)) * 0.5;
+        }
+    ''',
+    fragment_shader='''
+        #version 130
+
+        varying vec2 uv;
+        uniform sampler2D diffuse;
+        out vec3 f_color;
+
+        void main() {
+            f_color = texture(diffuse, uv).rgb;
+            //f_color = vec3(uv, 0);
+        }
+    ''',
+)
+
+verts = np.array([
+    (-1, -1),
+    (+1, -1),
+    (-1, +1),
+    (+1, +1),
+])
+texcoords = np.array([
+    (0, 0),
+    (1, 0),
+    (1, 1),
+    (0, 1)
+])
+all_attrs = np.concatenate([verts, texcoords], axis=1).astype('f4')
+lights_quad = mgl.buffer(verts.astype('f4').tobytes())
+vao = mgl.simple_vertex_array(
+    lights_shader,
+    lights_quad,
+    'vert',
+)
+
+
+rock = pyglet.sprite.Sprite(
+    pyglet.resource.image('sprites/rock_sm.png')
+)
+rock.scale = max(
+    WIDTH / rock.width,
+    HEIGHT / rock.height
+)
+
+
+
+water_verts = mgl.buffer(reserve=8, dynamic=True)
+water_shader = mgl.program(
+    vertex_shader='''
+        #version 130
+
+        in vec2 vert;
+
+        uniform mat4 mvp;
+        varying vec2 uv;
+
+        void main() {
+            gl_Position = mvp * vec4(vert, 0.0, 1.0);
+            uv = (gl_Position.xy + vec2(1, 1)) * 0.5;
+        }
+    ''',
+    fragment_shader='''
+        #version 130
+
+        varying vec2 uv;
+        uniform float t;
+        uniform sampler2D diffuse;
+        out vec3 f_color;
+
+        void main() {
+            vec2 off = vec2(
+                sin(sin(60.0 * uv.x) + cos(uv.y) * t),
+                sin(sin(60.0 * uv.y + 1.23) + (0.5 + 0.5 * sin(uv.x)) * t)
+            ) * 0.005;
+            vec3 diff = texture(diffuse, uv + off).rgb;
+            f_color = diff * 0.55 + vec3(0.1, 0.15, 0.2);
+        }
+    ''',
+)
+water_vao = mgl.simple_vertex_array(
+    water_shader,
+    water_verts,
+    'vert',
+)
+
+from pyrr import Matrix44
+
+
+t = 0
+
+
 @window.event
 def on_draw():
-    window.clear()
-    gl.glLoadIdentity()
-    gl.glScalef(PIXEL_SCALE, PIXEL_SCALE, 1)
-
+    global water_verts, water_vao, t
+    # Update graphical things
     dt = 1 / 60
+    t += dt
     pc.update(dt)
     for f in flies:
         f.update(dt)
 
-    sprites.draw()
     for w in water:
         w.update(dt)
-        w.draw()
+
+    window.clear()
+
+    fbuf.use()
+    fbuf.clear(0.13, 0.1, 0.1)
+    gl.glLoadIdentity()
+    gl.glScalef(PIXEL_SCALE, PIXEL_SCALE, 1)
+    rock.draw()
+    sprites.draw()
+
+    mgl.screen.use()
+    mgl.screen.clear()
+    fbuf.color_attachments[0].use()
+    vao.render(moderngl.TRIANGLE_STRIP)
+
+    #gl.glUseProgram(water_shader.glo)
+
+    view = Matrix44.orthogonal_projection(
+        0, WIDTH * SPACE_SCALE,
+        0, HEIGHT * SPACE_SCALE,
+        -1, 1,
+        dtype='f4'
+    )
+    all_water = np.concatenate(*[w.vertices for w in water]).reshape(-1, 1)
+    all_water = all_water.astype('f4').tobytes()
+
+    if water_verts.size != len(all_water):
+        water_verts = mgl.buffer(all_water, dynamic=True)
+        water_vao = mgl.simple_vertex_array(
+            water_shader,
+            water_verts,
+            'vert',
+        )
+    else:
+        water_verts.write(all_water)
+    water_shader.get('mvp', None).write(view.tobytes())
+    water_shader.get('t', None).value = t
+    fbuf.color_attachments[0].use()
+    water_vao.render(moderngl.TRIANGLE_STRIP)
+    gl.glUseProgram(0)
+
     fps_display.draw()
 
 
