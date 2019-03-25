@@ -287,7 +287,7 @@ class Water:
             self.xs,
             self.bot_verts,
         ))
-        self.vertices = verts
+        self.vertices = verts.reshape((-1, 2))
         #self.dl.vertices = np.reshape(verts, (-1, 1))
 
     def drip(self, _):
@@ -479,19 +479,31 @@ water_shader = mgl.program(
         #version 130
 
         in vec2 vert;
+        in float depth;
 
         uniform mat4 mvp;
         varying vec2 uv;
+        varying vec2 refl_uv;
+        varying float vdepth;
+
+        vec2 uv_pos(vec4 position) {
+            return (position.xy + vec2(1, 1)) * 0.5;
+        }
 
         void main() {
             gl_Position = mvp * vec4(vert, 0.0, 1.0);
-            uv = (gl_Position.xy + vec2(1, 1)) * 0.5;
+            uv = uv_pos(gl_Position);
+
+            vdepth = depth;
+            refl_uv = uv_pos(mvp * vec4(vert.x, vert.y + 4 * depth, 0, 1.0));
         }
     ''',
     fragment_shader='''
         #version 130
 
         varying vec2 uv;
+        varying vec2 refl_uv;
+        varying float vdepth;
         uniform float t;
         uniform sampler2D diffuse;
         out vec3 f_color;
@@ -502,7 +514,11 @@ water_shader = mgl.program(
                 sin(sin(60.0 * uv.y + 1.23) + (0.5 + 0.5 * sin(uv.x)) * t)
             ) * 0.005;
             vec3 diff = texture(diffuse, uv + off).rgb;
-            f_color = diff * 0.55 + vec3(0.1, 0.15, 0.2);
+            float refl_amount = 0.6 / (pow(vdepth * 3, 2) + 1);
+
+            vec3 refl_diff = texture(diffuse, refl_uv).rgb;
+
+            f_color = diff * 0.55 + vec3(0.1, 0.15, 0.2) + refl_diff * refl_amount;
         }
     ''',
 )
@@ -510,6 +526,7 @@ water_vao = mgl.simple_vertex_array(
     water_shader,
     water_verts,
     'vert',
+    'depth',
 )
 
 from pyrr import Matrix44
@@ -553,8 +570,13 @@ def on_draw():
         -1, 1,
         dtype='f4'
     )
-    all_water = np.concatenate(*[w.vertices for w in water]).reshape(-1, 1)
-    all_water = all_water.astype('f4').tobytes()
+    all_water = np.concatenate([w.vertices for w in water])
+    depths = np.stack([
+        np.zeros(len(all_water) // 2),
+        all_water[::2,1] - all_water[1::2,1]
+    ], axis=1).reshape((-1, 1))
+    all_water = np.concatenate([all_water, depths], axis=1)
+    all_water = all_water.reshape(-1).astype('f4').tobytes()
 
     if water_verts.size != len(all_water):
         water_verts = mgl.buffer(all_water, dynamic=True)
@@ -562,6 +584,7 @@ def on_draw():
             water_shader,
             water_verts,
             'vert',
+            'depth',
         )
     else:
         water_verts.write(all_water)
