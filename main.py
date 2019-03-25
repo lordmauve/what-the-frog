@@ -5,7 +5,6 @@ import pyglet.resource
 import pymunk
 from pymunk.vec2d import Vec2d
 import moderngl
-import numpy as np
 from pyrr import Matrix44
 
 import wtf.keys
@@ -17,6 +16,7 @@ from wtf.water import Water, WaterBatch
 from wtf.geom import SPACE_SCALE, phys_to_screen
 from wtf.actors import actor_sprites, Frog, Fly
 from wtf.hud import HUD
+from wtf.offscreen import OffscreenBuffer
 
 
 WIDTH = 1600   # Width in hidpi pixels
@@ -107,61 +107,7 @@ Fly(16, 16)
 fps_display = pyglet.clock.ClockDisplay()
 
 
-size = (WIDTH, HEIGHT)
-fbuf = mgl.framebuffer(
-    [mgl.texture(size, components=3)],
-    mgl.depth_renderbuffer(size)
-)
-lights = mgl.simple_framebuffer((WIDTH, HEIGHT))
-
-
-lights_shader = mgl.program(
-    vertex_shader='''
-        #version 130
-
-        in vec2 vert;
-
-        varying vec2 uv;
-
-        void main() {
-            gl_Position = vec4(vert, 0.0, 1.0);
-            uv = (vert + vec2(1, 1)) * 0.5;
-        }
-    ''',
-    fragment_shader='''
-        #version 130
-
-        varying vec2 uv;
-        uniform sampler2D diffuse;
-        out vec3 f_color;
-
-        void main() {
-            f_color = texture(diffuse, uv).rgb;
-            //f_color = vec3(uv, 0);
-        }
-    ''',
-)
-
-verts = np.array([
-    (-1, -1),
-    (+1, -1),
-    (-1, +1),
-    (+1, +1),
-])
-texcoords = np.array([
-    (0, 0),
-    (1, 0),
-    (1, 1),
-    (0, 1)
-])
-all_attrs = np.concatenate([verts, texcoords], axis=1).astype('f4')
-lights_quad = mgl.buffer(verts.astype('f4').tobytes())
-vao = mgl.simple_vertex_array(
-    lights_shader,
-    lights_quad,
-    'vert',
-)
-
+offscreen = OffscreenBuffer(WIDTH, HEIGHT, mgl)
 
 rock = pyglet.sprite.Sprite(
     pyglet.resource.image('sprites/rock_sm.png')
@@ -188,17 +134,15 @@ def on_draw(dt):
 
     window.clear()
 
-    fbuf.use()
-    fbuf.clear(0.13, 0.1, 0.1)
-    gl.glLoadIdentity()
-    gl.glScalef(PIXEL_SCALE, PIXEL_SCALE, 1)
-    rock.draw()
-    actor_sprites.draw()
+    with offscreen.bind_buffer() as fbuf:
+        fbuf.clear(0.13, 0.1, 0.1)
+        gl.glLoadIdentity()
+        gl.glScalef(PIXEL_SCALE, PIXEL_SCALE, 1)
+        rock.draw()
+        actor_sprites.draw()
 
-    mgl.screen.use()
     mgl.screen.clear()
-    fbuf.color_attachments[0].use()
-    vao.render(moderngl.TRIANGLE_STRIP)
+    offscreen.draw()
 
     mvp = Matrix44.orthogonal_projection(
         0, WIDTH * SPACE_SCALE,
@@ -207,13 +151,13 @@ def on_draw(dt):
         dtype='f4'
     )
 
-    fbuf.color_attachments[0].use()
-    water_batch.render(dt, mvp)
+    with offscreen.bind_texture():
+        water_batch.render(dt, mvp)
     gl.glUseProgram(0)
 
     hud.draw()
 
-    fps_display.draw()
+#    fps_display.draw()
 
 
 class JumpController:
