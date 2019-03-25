@@ -1,6 +1,3 @@
-from math import sin
-import random
-
 import pyglet
 from pyglet import gl
 import pyglet.sprite
@@ -13,6 +10,12 @@ from pyrr import Matrix44
 
 import wtf.keys
 from wtf.directions import Direction
+from wtf.physics import (
+    space, box, COLLISION_TYPE_FROG, COLLISION_TYPE_COLLECTIBLE
+)
+from wtf.water import Water
+from wtf.geom import SPACE_SCALE, phys_to_screen
+from wtf.actors import actor_sprites, Frog, Fly
 
 
 WIDTH = 1600   # Width in hidpi pixels
@@ -20,23 +23,6 @@ HEIGHT = 1200  # Height in hidpi pixels
 
 PIXEL_SCALE = 1.0  # Scale down for non-hidpi screens
 
-
-pyglet.resource.path = [
-    'assets/',
-]
-pyglet.resource.reindex()
-
-
-# Space units are 64 screen pixels
-SPACE_SCALE = 1 / 64
-
-
-GRAVITY = Vec2d(0, -50)
-BUOYANCY = Vec2d(0, 500)
-WATER_DRAG = 20
-
-space = pymunk.Space()
-space.gravity = GRAVITY
 
 window = pyglet.window.Window(
     width=round(WIDTH * PIXEL_SCALE),
@@ -46,28 +32,8 @@ window = pyglet.window.Window(
 
 mgl = moderngl.create_context()
 
-sprites = pyglet.graphics.Batch()
-
 platform = pyglet.resource.image('sprites/platform.png')
 platforms = []
-
-
-# Collision types for callbacks
-COLLISION_TYPE_WATER = 1
-COLLISION_TYPE_COLLECTIBLE = 2
-COLLISION_TYPE_FROG = 3
-
-
-def phys_to_screen(v, v2=None):
-    if v2:
-        return Vec2d(v, v2) / SPACE_SCALE
-    return Vec2d(*v) / SPACE_SCALE
-
-
-def screen_to_phys(v, v2=None):
-    if v2:
-        return Vec2d(v, v2) * SPACE_SCALE
-    return Vec2d(*v) * SPACE_SCALE
 
 
 def create_platform(x, y):
@@ -76,7 +42,7 @@ def create_platform(x, y):
     Here x and y are in physics coordinates.
 
     """
-    s = pyglet.sprite.Sprite(platform, batch=sprites)
+    s = pyglet.sprite.Sprite(platform, batch=actor_sprites)
     s.position = phys_to_screen(x, y)
     platforms.append(s)
 
@@ -87,23 +53,6 @@ def create_platform(x, y):
     shape.friction = 0.6
     shape.elasticity = 0.6
     space.add(shape)
-
-
-def box(body, x, y, w, h):
-    """Create a pymunk box."""
-    bl = Vec2d(x, y)
-    w = Vec2d(w, 0)
-    h = Vec2d(0, h)
-    shape = pymunk.Poly(
-        body,
-        [
-            bl,
-            bl + w,
-            bl + w + h,
-            bl + h,
-        ]
-    )
-    return shape
 
 
 def create_walls(space):
@@ -122,249 +71,8 @@ def create_walls(space):
         space.add(shape)
 
 
-class Tongue:
-    TEX = pyglet.resource.texture('sprites/tongue.png')
-    ordering = pyglet.graphics.OrderedGroup(1)
-    group = pyglet.sprite.SpriteGroup(
-        TEX,
-        gl.GL_SRC_ALPHA,
-        gl.GL_ONE_MINUS_SRC_ALPHA,
-        parent=ordering
-    )
-
-    def __init__(self, mouth_pos, fly_pos):
-        self.mouth_pos = mouth_pos
-        self.fly_pos = fly_pos
-        self.length = 0
-
-        self.dl = sprites.add(
-            4,
-            gl.GL_QUADS,
-            self.group,
-            'v2f/stream',
-            't3f/static',
-        )
-        self.dl.tex_coords = self.TEX.tex_coords
-        self.recalc_verts()
-
-    def recalc_verts(self):
-        """Recalculate the vertices from current fly and mouth pos."""
-        tongue_w = self.TEX.height
-
-        along = self.fly_pos - self.mouth_pos
-        across = along.normalized().rotated(90) * tongue_w * 0.5
-
-        along *= self.length
-
-        self.dl.vertices = [c for v in [
-            self.mouth_pos - across,
-            self.mouth_pos - across + along,
-            self.mouth_pos + across + along,
-            self.mouth_pos + across,
-        ] for c in v]
-
-    def delete(self):
-        self.dl.delete()
-
-
-class Frog:
-    SPRITE = pyglet.resource.image('sprites/jumper.png')
-    SPRITE.anchor_y = 5
-
-    def __init__(self, x, y):
-        self.sprite = pyglet.sprite.Sprite(self.SPRITE, batch=sprites)
-        self.sprite.position = phys_to_screen(x, y)
-        self.body = pymunk.Body(5, pymunk.inf)
-        self.body.position = (x, y)
-        self.shape = box(
-            self.body,
-            0, 0,
-            w=self.SPRITE.width * SPACE_SCALE,
-            h=(self.SPRITE.height - 5) * SPACE_SCALE,
-        )
-        self.shape.obj = self
-        self.shape.collision_type = COLLISION_TYPE_FROG
-        self.shape.friction = 0.8
-        self.shape.elasticity = 0.2
-
-        space.add(self.body, self.shape)
-        self.tongue = None
-
-    def lick(self, pos):
-        if self.tongue:
-            self.tongue.fly_pos = pos
-            self.tongue.length = 0
-            self.tongue.t = 0
-            pyglet.clock.unschedule(self._stop_lick)
-        else:
-            self.tongue = Tongue(self.mouth_pos, pos)
-            self.tongue.t = 0
-
-    @property
-    def mouth_pos(self):
-        return Vec2d(*self.sprite.position) + Vec2d(32, 20)
-
-    def update(self, dt):
-        self.sprite.position = self.body.position / SPACE_SCALE
-
-        # Update the tongue
-        if self.tongue:
-            self.tongue.t += dt
-            t = self.tongue.t
-            if t >= 0.1:
-                self.tongue.delete()
-                self.tongue = None
-            else:
-                self.tongue.length = 400 * t * (0.1 - t)
-                self.tongue.mouth_pos = self.mouth_pos
-                self.tongue.recalc_verts()
-
-
-class Water:
-    """A rectangular body of water.
-
-    Each water body has a ripple system that creates waves that move along
-    the surface. Water bodies are rendered with refraction and reflection.
-
-    """
-    VCONV = np.array([0.05, 0.3, -0.8, 0.3, 0.05])
-    LCONV = np.array([0.05, 0.9, 0.05])
-
-    SUBDIV = 5
-
-    def __init__(self, surf_y, x1=0, x2=WIDTH * SPACE_SCALE, bot_y=0):
-        self.y = surf_y
-        self.x1 = x1
-        self.x2 = x2
-
-        self.shape = box(
-            space.static_body,
-            x=x1,
-            y=bot_y,
-            w=x2 - x1,
-            h=surf_y - bot_y
-        )
-        self.shape.water = self
-        self.shape.collision_type = COLLISION_TYPE_WATER
-        space.add(self.shape)
-
-        size = int(x2 - x1) * self.SUBDIV + 1
-        self.xs = np.linspace(x1, x2, size)
-        self.velocities = np.zeros(size)
-        self.levels = np.zeros(size)
-        self.bot_verts = np.ones(size) * bot_y
-
-    def update(self, dt):
-        self.velocities += np.convolve(
-            self.levels,
-            self.VCONV * (dt * 60),
-            'same',
-        )
-        self.velocities *= 0.5 ** dt  # damp
-        self.levels = np.convolve(
-            self.levels,
-            self.LCONV,
-            'same'
-        ) + self.velocities * 10 * dt  # apply velocity
-
-        verts = np.dstack((
-            self.xs,
-            self.levels + self.y,
-            self.xs,
-            self.bot_verts,
-        ))
-        self.vertices = verts.reshape((-1, 2))
-
-    def drip(self, _):
-        self.levels[-9] = -0.5
-        self.velocities[-9] = 0
-
-    @classmethod
-    def draw(cls):
-        cls.water_batch.draw()
-
-    def pre_solve(arbiter, space, data):
-        dt = space.current_time_step
-        water, actor = arbiter.shapes
-        body = actor.body
-        if not body:
-            return False
-
-        inst = water.water
-
-        bb = actor.cache_bb()
-
-        a = round(bb.left - inst.x1) * inst.SUBDIV
-        b = round(bb.right - inst.x1) * inst.SUBDIV
-        levels = inst.levels[a:b] + inst.y
-        frac_immersed = float(np.mean(np.clip(
-            (levels - bb.bottom) / (bb.top - bb.bottom),
-            0, 1
-        )))
-        if frac_immersed < 1:
-            f = 0.6 ** dt
-            inst.velocities[a:b] = (
-                inst.velocities[a:b] * f +
-                body.velocity.y * abs(body.velocity.y) * 0.1 * (1.0 - f)
-            )
-
-        buoyancy = BUOYANCY * bb.area()
-        drag = -body.velocity * WATER_DRAG
-
-        # Both buoyancy and drag are scaled by how immersed we are
-        force = (buoyancy + drag) * frac_immersed
-        body.apply_force_at_local_point(force, body.center_of_gravity)
-        return False
-
-    handler = space.add_wildcard_collision_handler(COLLISION_TYPE_WATER)
-    handler.pre_solve = pre_solve
-
-
-class Fly:
-    SPRITE = pyglet.resource.image('sprites/fly.png')
-    SPRITE.anchor_x = SPRITE.width // 2
-    SPRITE.anchor_y = SPRITE.height // 3
-
-    CATCH_RADIUS = 2.5
-
-    def __init__(self, x, y):
-        self.pos = Vec2d(x + 0.5, y + 0.5)
-        self.t = 0
-        self.sprite = pyglet.sprite.Sprite(
-            self.SPRITE,
-            batch=sprites,
-            usage='stream'
-        )
-        self.sprite.position = phys_to_screen(self.pos)
-
-        self.shape = pymunk.Circle(
-            space.static_body,
-            self.CATCH_RADIUS,
-            offset=(x, y)
-        )
-        self.shape.collision_type = COLLISION_TYPE_COLLECTIBLE
-        self.shape.obj = self
-        space.add(self.shape)
-        self.update(random.uniform(0, 5))
-
-    def update(self, dt):
-        self.t += dt
-        self.sprite._scale_y *= -1
-        self.sprite._rotation = 10 * sin(self.t)
-        self.sprite._x, self.sprite._y = phys_to_screen(
-            self.pos
-            + Vec2d(
-                0.5 * sin(2 * self.t),
-                0.5 * sin(3 * self.t)
-            )  # lissajous wander
-        )
-        self.sprite._update_position()
-
-    def collect(self):
-        flies.remove(self)
-        self.sprite.delete()
-        space.remove(self.shape)
-        pyglet.clock.unschedule(self.update)
+def water(y, x1=0, x2=WIDTH * SPACE_SCALE, bot_y=0):
+    return Water(y, x1, x2, bot_y)
 
 
 def on_collect(arbiter, space, data):
@@ -391,13 +99,11 @@ create_platform(13, 9)
 create_walls(space)
 
 water = [
-    Water(6.5),
+    water(6.5),
 ]
 
-flies = [
-    Fly(3, 10),
-    Fly(16, 16),
-]
+Fly(3, 10)
+Fly(16, 16)
 
 
 fps_display = pyglet.clock.ClockDisplay()
@@ -536,7 +242,7 @@ def on_draw():
     dt = 1 / 60
     t += dt
     pc.update(dt)
-    for f in flies:
+    for f in Fly.insts:
         f.update(dt)
 
     for w in water:
@@ -549,7 +255,7 @@ def on_draw():
     gl.glLoadIdentity()
     gl.glScalef(PIXEL_SCALE, PIXEL_SCALE, 1)
     rock.draw()
-    sprites.draw()
+    actor_sprites.draw()
 
     mgl.screen.use()
     mgl.screen.clear()
