@@ -1,6 +1,99 @@
 import numpy as np
+import moderngl
 
 from .physics import space, box, BUOYANCY, WATER_DRAG, COLLISION_TYPE_WATER
+
+
+class WaterBatch:
+    def __init__(self, mgl):
+        self.mgl = mgl
+        self.water_verts = mgl.buffer(reserve=8, dynamic=True)
+        self.water_shader = mgl.program(
+            vertex_shader='''
+                #version 130
+
+                in vec2 vert;
+                in float depth;
+
+                uniform mat4 mvp;
+                varying vec2 uv;
+                varying vec2 refl_uv;
+                varying float vdepth;
+
+                vec2 uv_pos(vec4 position) {
+                    return (position.xy + vec2(1, 1)) * 0.5;
+                }
+
+                void main() {
+                    gl_Position = mvp * vec4(vert, 0.0, 1.0);
+                    uv = uv_pos(gl_Position);
+
+                    vdepth = depth;
+                    vec4 refl_pos = vec4(vert.x, vert.y + 2 * depth, 0, 1.0);
+                    refl_uv = uv_pos(mvp * refl_pos);
+                }
+            ''',
+            fragment_shader='''
+                #version 130
+
+                varying vec2 uv;
+                varying vec2 refl_uv;
+                varying float vdepth;
+                uniform float t;
+                uniform sampler2D diffuse;
+                out vec3 f_color;
+
+                void main() {
+                    vec2 off = vec2(
+                        sin(sin(60.0 * uv.x) + cos(uv.y) * t),
+                        sin(sin(60.0 * uv.y + 1.23) + (0.5 + 0.5 * sin(uv.x)) * t)
+                    ) * 0.005;
+                    vec3 diff = texture(diffuse, uv + off).rgb;
+                    float refl_amount = 0.6 / (pow(vdepth * 2, 2) + 1);
+
+                    vec3 refl_diff = texture(diffuse, refl_uv).rgb;
+
+                    f_color = diff * 0.55 + vec3(0.1, 0.15, 0.2)
+                              + refl_diff * refl_amount;
+                }
+            ''',
+        )
+        self.water_vao = mgl.simple_vertex_array(
+            self.water_shader,
+            self.water_verts,
+            'vert',
+            'depth',
+        )
+        self.t = 0
+        self.mvp_uniform = self.water_shader.get('mvp', None)
+        self.t_uniform = self.water_shader.get('t', None)
+
+    def render(self, dt, mvp):
+        if not Water.insts:
+            return
+        self.t += dt
+        all_water = np.concatenate([w.vertices for w in Water.insts])
+        depths = np.stack([
+            np.zeros(len(all_water) // 2),
+            all_water[::2, 1] - all_water[1::2, 1]
+        ], axis=1).reshape((-1, 1))
+        all_water = np.concatenate([all_water, depths], axis=1)
+        all_water = all_water.reshape(-1).astype('f4').tobytes()
+
+        if self.water_verts.size != len(all_water):
+            self.water_verts = self.mgl.buffer(all_water, dynamic=True)
+            self.water_vao = self.mgl.simple_vertex_array(
+                self.water_shader,
+                self.water_verts,
+                'vert',
+                'depth',
+            )
+        else:
+            self.water_verts.write(all_water)
+
+        self.mvp_uniform.write(mvp.tobytes())
+        self.t_uniform.value = self.t
+        self.water_vao.render(moderngl.TRIANGLE_STRIP)
 
 
 class Water:
@@ -14,6 +107,8 @@ class Water:
     LCONV = np.array([0.05, 0.9, 0.05])
 
     SUBDIV = 5
+
+    insts = []
 
     def __init__(self, surf_y, x1, x2, bot_y=0):
         self.y = surf_y
@@ -36,6 +131,7 @@ class Water:
         self.velocities = np.zeros(size)
         self.levels = np.zeros(size)
         self.bot_verts = np.ones(size) * bot_y
+        self.insts.append(self)
 
     def update(self, dt):
         self.velocities += np.convolve(
@@ -62,9 +158,8 @@ class Water:
         self.levels[-9] = -0.5
         self.velocities[-9] = 0
 
-    @classmethod
-    def draw(cls):
-        cls.water_batch.draw()
+    def delete(self):
+        self.insts.remove(self)
 
     def pre_solve(arbiter, space, data):
         dt = space.current_time_step

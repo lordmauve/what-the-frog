@@ -13,7 +13,7 @@ from wtf.directions import Direction
 from wtf.physics import (
     space, box, COLLISION_TYPE_FROG, COLLISION_TYPE_COLLECTIBLE
 )
-from wtf.water import Water
+from wtf.water import Water, WaterBatch
 from wtf.geom import SPACE_SCALE, phys_to_screen
 from wtf.actors import actor_sprites, Frog, Fly
 
@@ -98,10 +98,7 @@ create_platform(5, 17)
 create_platform(13, 9)
 create_walls(space)
 
-water = [
-    water(6.5),
-]
-
+water(6.5)
 Fly(3, 10)
 Fly(16, 16)
 
@@ -174,65 +171,7 @@ rock.scale = max(
 )
 
 
-water_verts = mgl.buffer(reserve=8, dynamic=True)
-water_shader = mgl.program(
-    vertex_shader='''
-        #version 130
-
-        in vec2 vert;
-        in float depth;
-
-        uniform mat4 mvp;
-        varying vec2 uv;
-        varying vec2 refl_uv;
-        varying float vdepth;
-
-        vec2 uv_pos(vec4 position) {
-            return (position.xy + vec2(1, 1)) * 0.5;
-        }
-
-        void main() {
-            gl_Position = mvp * vec4(vert, 0.0, 1.0);
-            uv = uv_pos(gl_Position);
-
-            vdepth = depth;
-            refl_uv = uv_pos(mvp * vec4(vert.x, vert.y + 2 * depth, 0, 1.0));
-        }
-    ''',
-    fragment_shader='''
-        #version 130
-
-        varying vec2 uv;
-        varying vec2 refl_uv;
-        varying float vdepth;
-        uniform float t;
-        uniform sampler2D diffuse;
-        out vec3 f_color;
-
-        void main() {
-            vec2 off = vec2(
-                sin(sin(60.0 * uv.x) + cos(uv.y) * t),
-                sin(sin(60.0 * uv.y + 1.23) + (0.5 + 0.5 * sin(uv.x)) * t)
-            ) * 0.005;
-            vec3 diff = texture(diffuse, uv + off).rgb;
-            float refl_amount = 0.6 / (pow(vdepth * 2, 2) + 1);
-
-            vec3 refl_diff = texture(diffuse, refl_uv).rgb;
-
-            f_color = diff * 0.55 + vec3(0.1, 0.15, 0.2)
-                      + refl_diff * refl_amount;
-        }
-    ''',
-)
-water_vao = mgl.simple_vertex_array(
-    water_shader,
-    water_verts,
-    'vert',
-    'depth',
-)
-
-
-t = 0
+water_batch = WaterBatch(mgl)
 
 
 @window.event
@@ -240,12 +179,11 @@ def on_draw():
     global water_verts, water_vao, t
     # Update graphical things
     dt = 1 / 60
-    t += dt
     pc.update(dt)
     for f in Fly.insts:
         f.update(dt)
 
-    for w in water:
+    for w in Water.insts:
         w.update(dt)
 
     window.clear()
@@ -262,34 +200,16 @@ def on_draw():
     fbuf.color_attachments[0].use()
     vao.render(moderngl.TRIANGLE_STRIP)
 
-    view = Matrix44.orthogonal_projection(
+    mvp = Matrix44.orthogonal_projection(
         0, WIDTH * SPACE_SCALE,
         0, HEIGHT * SPACE_SCALE,
         -1, 1,
         dtype='f4'
     )
-    all_water = np.concatenate([w.vertices for w in water])
-    depths = np.stack([
-        np.zeros(len(all_water) // 2),
-        all_water[::2, 1] - all_water[1::2, 1]
-    ], axis=1).reshape((-1, 1))
-    all_water = np.concatenate([all_water, depths], axis=1)
-    all_water = all_water.reshape(-1).astype('f4').tobytes()
 
-    if water_verts.size != len(all_water):
-        water_verts = mgl.buffer(all_water, dynamic=True)
-        water_vao = mgl.simple_vertex_array(
-            water_shader,
-            water_verts,
-            'vert',
-            'depth',
-        )
-    else:
-        water_verts.write(all_water)
-    water_shader.get('mvp', None).write(view.tobytes())
-    water_shader.get('t', None).value = t
+
     fbuf.color_attachments[0].use()
-    water_vao.render(moderngl.TRIANGLE_STRIP)
+    water_batch.render(dt, mvp)
     gl.glUseProgram(0)
 
     fps_display.draw()
