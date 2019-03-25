@@ -1,20 +1,18 @@
-from enum import Enum
 from math import sin
-import pathlib
 import random
-import datetime
-from itertools import count
 
 import pyglet
 from pyglet import gl
-from pyglet.window import key
 import pyglet.sprite
 import pyglet.resource
 import pymunk
 from pymunk.vec2d import Vec2d
 import moderngl
-
 import numpy as np
+from pyrr import Matrix44
+
+import wtf.keys
+from wtf.directions import Direction
 
 
 WIDTH = 1600   # Width in hidpi pixels
@@ -40,7 +38,10 @@ WATER_DRAG = 20
 space = pymunk.Space()
 space.gravity = GRAVITY
 
-window = pyglet.window.Window(round(WIDTH * PIXEL_SCALE), round(HEIGHT * PIXEL_SCALE))
+window = pyglet.window.Window(
+    width=round(WIDTH * PIXEL_SCALE),
+    height=round(HEIGHT * PIXEL_SCALE)
+)
 
 
 mgl = moderngl.create_context()
@@ -81,7 +82,7 @@ def create_platform(x, y):
 
     shape = box(
         space.static_body,
-        x, y, 3,1
+        x, y, 3, 1
     )
     shape.friction = 0.6
     shape.elasticity = 0.6
@@ -103,7 +104,6 @@ def box(body, x, y, w, h):
         ]
     )
     return shape
-
 
 
 def create_walls(space):
@@ -169,7 +169,6 @@ class Tongue:
 
 class Frog:
     SPRITE = pyglet.resource.image('sprites/jumper.png')
-    #img.anchor_x = img.width // 2
     SPRITE.anchor_y = 5
 
     def __init__(self, x, y):
@@ -222,19 +221,12 @@ class Frog:
 
 
 class Water:
-    class WaterGroup(pyglet.graphics.Group):
-        def set_state(self):
-            gl.glEnable(gl.GL_BLEND)
-            gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
-            gl.glColor4f(0.3, 0.5, 0.9, 0.3)
+    """A rectangular body of water.
 
-        def unset_state(self):
-            gl.glColor4f(1, 1, 1, 1)
-            gl.glDisable(gl.GL_BLEND)
+    Each water body has a ripple system that creates waves that move along
+    the surface. Water bodies are rendered with refraction and reflection.
 
-    water_batch = pyglet.graphics.Batch()
-    group = WaterGroup()
-
+    """
     VCONV = np.array([0.05, 0.3, -0.8, 0.3, 0.05])
     LCONV = np.array([0.05, 0.9, 0.05])
 
@@ -261,12 +253,6 @@ class Water:
         self.velocities = np.zeros(size)
         self.levels = np.zeros(size)
         self.bot_verts = np.ones(size) * bot_y
-        self.dl = self.water_batch.add(
-            size * 2,
-            gl.GL_TRIANGLE_STRIP,
-            self.group,
-            'v2f/stream'
-        )
 
     def update(self, dt):
         self.velocities += np.convolve(
@@ -288,7 +274,6 @@ class Water:
             self.bot_verts,
         ))
         self.vertices = verts.reshape((-1, 2))
-        #self.dl.vertices = np.reshape(verts, (-1, 1))
 
     def drip(self, _):
         self.levels[-9] = -0.5
@@ -323,11 +308,12 @@ class Water:
                 body.velocity.y * abs(body.velocity.y) * 0.1 * (1.0 - f)
             )
 
-        force = (BUOYANCY * bb.area() - body.velocity * WATER_DRAG) * frac_immersed
-        body.apply_force_at_local_point(
-            force,
-            body.center_of_gravity,
-        )
+        buoyancy = BUOYANCY * bb.area()
+        drag = -body.velocity * WATER_DRAG
+
+        # Both buoyancy and drag are scaled by how immersed we are
+        force = (buoyancy + drag) * frac_immersed
+        body.apply_force_at_local_point(force, body.center_of_gravity)
         return False
 
     handler = space.add_wildcard_collision_handler(COLLISION_TYPE_WATER)
@@ -351,7 +337,11 @@ class Fly:
         )
         self.sprite.position = phys_to_screen(self.pos)
 
-        self.shape = pymunk.Circle(space.static_body, self.CATCH_RADIUS, offset=(x, y))
+        self.shape = pymunk.Circle(
+            space.static_body,
+            self.CATCH_RADIUS,
+            offset=(x, y)
+        )
         self.shape.collision_type = COLLISION_TYPE_COLLECTIBLE
         self.shape.obj = self
         space.add(self.shape)
@@ -363,7 +353,10 @@ class Fly:
         self.sprite._rotation = 10 * sin(self.t)
         self.sprite._x, self.sprite._y = phys_to_screen(
             self.pos
-            + Vec2d(0.5 * sin(2 * self.t), 0.5 * sin(3 * self.t))  # lissajous wander
+            + Vec2d(
+                0.5 * sin(2 * self.t),
+                0.5 * sin(3 * self.t)
+            )  # lissajous wander
         )
         self.sprite._update_position()
 
@@ -383,7 +376,10 @@ def on_collect(arbiter, space, data):
     return False
 
 
-handler = space.add_collision_handler(COLLISION_TYPE_COLLECTIBLE, COLLISION_TYPE_FROG)
+handler = space.add_collision_handler(
+    COLLISION_TYPE_COLLECTIBLE,
+    COLLISION_TYPE_FROG
+)
 handler.begin = on_collect
 
 
@@ -472,7 +468,6 @@ rock.scale = max(
 )
 
 
-
 water_verts = mgl.buffer(reserve=8, dynamic=True)
 water_shader = mgl.program(
     vertex_shader='''
@@ -518,7 +513,8 @@ water_shader = mgl.program(
 
             vec3 refl_diff = texture(diffuse, refl_uv).rgb;
 
-            f_color = diff * 0.55 + vec3(0.1, 0.15, 0.2) + refl_diff * refl_amount;
+            f_color = diff * 0.55 + vec3(0.1, 0.15, 0.2)
+                      + refl_diff * refl_amount;
         }
     ''',
 )
@@ -528,8 +524,6 @@ water_vao = mgl.simple_vertex_array(
     'vert',
     'depth',
 )
-
-from pyrr import Matrix44
 
 
 t = 0
@@ -562,8 +556,6 @@ def on_draw():
     fbuf.color_attachments[0].use()
     vao.render(moderngl.TRIANGLE_STRIP)
 
-    #gl.glUseProgram(water_shader.glo)
-
     view = Matrix44.orthogonal_projection(
         0, WIDTH * SPACE_SCALE,
         0, HEIGHT * SPACE_SCALE,
@@ -573,7 +565,7 @@ def on_draw():
     all_water = np.concatenate([w.vertices for w in water])
     depths = np.stack([
         np.zeros(len(all_water) // 2),
-        all_water[::2,1] - all_water[1::2,1]
+        all_water[::2, 1] - all_water[1::2, 1]
     ], axis=1).reshape((-1, 1))
     all_water = np.concatenate([all_water, depths], axis=1)
     all_water = all_water.reshape(-1).astype('f4').tobytes()
@@ -597,51 +589,6 @@ def on_draw():
     fps_display.draw()
 
 
-rt3_2 = 3 ** 0.5 / 2
-
-
-class DirectionLR(Enum):
-    """The six cardinal directions for the jumps."""
-
-    L = Vec2d(-1, 0)
-    R = Vec2d(1, 0)
-    UL = Vec2d(-0.5, rt3_2)
-    UR = Vec2d(0.5, rt3_2)
-    DL = Vec2d(-0.5, -rt3_2)
-    DR = Vec2d(0.5, -rt3_2)
-
-
-class Direction(Enum):
-    """The six cardinal directions for the jumps."""
-
-    UL = Vec2d(-rt3_2, 0.5)
-    U = Vec2d(0, 1)
-    UR = Vec2d(rt3_2, 0.5)
-    DL = Vec2d(-rt3_2, -0.5)
-    D = Vec2d(0, -1)
-    DR = Vec2d(rt3_2, -0.5)
-
-
-# Input scheme for LR directions
-INPUT_TO_JUMP_LR = {
-    key.Q: DirectionLR.UL,
-    key.A: DirectionLR.L,
-    key.Z: DirectionLR.DL,
-    key.E: DirectionLR.UR,
-    key.D: DirectionLR.R,
-    key.C: DirectionLR.DR,
-
-    # Cursors are L/R + mod
-    (key.LEFT, key.UP): DirectionLR.UL,
-    (key.LEFT, None): DirectionLR.L,
-    (key.LEFT, key.DOWN): DirectionLR.DL,
-    (key.RIGHT, key.UP): DirectionLR.UR,
-    (key.RIGHT, None): DirectionLR.R,
-    (key.RIGHT, key.DOWN): DirectionLR.DR,
-}
-
-
-
 IMPULSE_SCALE = 26
 JUMP_IMPULSES = {
     Direction.UL: Vec2d.unit().rotated_degrees(30) * IMPULSE_SCALE,
@@ -653,80 +600,22 @@ JUMP_IMPULSES = {
 }
 
 
-# Input scheme for UD directions
-INPUT_TO_JUMP = {
-    key.Q: Direction.UL,
-    key.W: Direction.U,
-    key.E: Direction.UR,
-    key.A: Direction.DL,
-    key.S: Direction.D,
-    key.D: Direction.DR,
-
-    # Cursors are mod + U/D
-    (key.LEFT, key.UP): Direction.UL,
-    (None, key.UP): Direction.U,
-    (key.RIGHT, key.UP): Direction.UR,
-    (key.LEFT, key.DOWN): Direction.DL,
-    (None, key.DOWN): Direction.D,
-    (key.RIGHT, key.DOWN): Direction.DR,
-}
-
-
-keys_down = key.KeyStateHandler()
-window.push_handlers(keys_down)
-
-
 def jump(direction):
     pc.body.velocity = JUMP_IMPULSES[direction]
 
 
-def screenshot_path(comp_start=datetime.date(2019, 3, 24)):
-    """Get a path to save a screenshot into."""
-    today = datetime.date.today()
-    comp_day = (today - comp_start).days + 1
-    grabs = pathlib.Path('grabs')
-
-    for n in count(1):
-        p = grabs / f'day{comp_day}-{n}.png'
-        if not p.exists():
-            return str(p)
-
-
-@window.event
-def on_key_press(symbol, modifiers):
-    if symbol in INPUT_TO_JUMP:
-        jump(INPUT_TO_JUMP[symbol])
-    elif symbol in (key.UP, key.DOWN):
-        mod = None
-        if keys_down[key.LEFT]:
-            mod = key.LEFT
-        elif keys_down[key.RIGHT]:
-            mod = key.RIGHT
-        k = (mod, symbol)
-        if k in INPUT_TO_JUMP:
-            jump(INPUT_TO_JUMP[k])
-
-    if symbol == key.F12:
-        # disable transfer alpha channel
-        gl.glPixelTransferf(gl.GL_ALPHA_BIAS, 1.0)
-        image = pyglet.image.ColorBufferImage(
-            0,
-            0,
-            window.width,
-            window.height
-        )
-        image.save(screenshot_path())
-        # re-enable alpha channel transfer
-        gl.glPixelTransferf(gl.GL_ALPHA_BIAS, 0.0)
-
-    keys_down.on_key_press(symbol, modifiers)
+keyhandler = wtf.keys.KeyInputHandler(
+    jump=jump,
+    window=window,
+)
+window.push_handlers(keyhandler)
 
 
 def update_physics(dt):
     for _ in range(3):
         space.step(1 / 180)
 
+
 pyglet.clock.set_fps_limit(60)
 pyglet.clock.schedule(update_physics)
 pyglet.app.run()
-
