@@ -19,6 +19,7 @@ from wtf.geom import SPACE_SCALE, phys_to_screen
 from wtf.actors import actor_sprites, Frog, Fly
 from wtf.hud import HUD
 from wtf.offscreen import OffscreenBuffer
+from wtf.poly import RockPoly
 
 
 WIDTH = 1600   # Width in hidpi pixels
@@ -117,7 +118,15 @@ class Level:
         Fly(3, 10)
         Fly(16, 16)
 
+        self.objs = [
+            RockPoly(
+                [16, 5, 26, 5, 26, 10, 22, 10, 19, 6],
+            )
+        ]
+
     def reload(self):
+        for o in self.objs:
+            o.delete()
         for f in Fly.insts[:]:
             f.delete()
         for w in Water.insts[:]:
@@ -166,6 +175,7 @@ def on_draw(dt):
         gl.glLoadIdentity()
         gl.glScalef(PIXEL_SCALE, PIXEL_SCALE, 1)
         rock.draw()
+        RockPoly.batch.draw()
         actor_sprites.draw()
 
     mgl.screen.clear()

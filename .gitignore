@@ -3,3 +3,4 @@ devnotes
 *.pyc
 *.swp
 grabs
+source/*.zip

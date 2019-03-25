@@ -1,0 +1,3 @@
+[submodule "vendor/earcut-python"]
+	path = vendor/earcut-python
+	url = https://github.com/joshuaskelly/earcut-python
