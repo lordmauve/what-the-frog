@@ -16,6 +16,7 @@ from wtf.physics import (
 from wtf.water import Water, WaterBatch
 from wtf.geom import SPACE_SCALE, phys_to_screen
 from wtf.actors import actor_sprites, Frog, Fly
+from wtf.hud import HUD
 
 
 WIDTH = 1600   # Width in hidpi pixels
@@ -174,17 +175,16 @@ rock.scale = max(
 water_batch = WaterBatch(mgl)
 
 
-@window.event
-def on_draw():
-    global water_verts, water_vao, t
+def on_draw(dt):
     # Update graphical things
-    dt = 1 / 60
     pc.update(dt)
     for f in Fly.insts:
         f.update(dt)
 
     for w in Water.insts:
         w.update(dt)
+
+    hud.update(dt)
 
     window.clear()
 
@@ -207,31 +207,57 @@ def on_draw():
         dtype='f4'
     )
 
-
     fbuf.color_attachments[0].use()
     water_batch.render(dt, mvp)
     gl.glUseProgram(0)
 
+    hud.draw()
+
     fps_display.draw()
 
 
-IMPULSE_SCALE = 26
-JUMP_IMPULSES = {
-    Direction.UL: Vec2d.unit().rotated_degrees(30) * IMPULSE_SCALE,
-    Direction.U: Vec2d.unit() * IMPULSE_SCALE,
-    Direction.UR: Vec2d.unit().rotated_degrees(-30) * IMPULSE_SCALE,
-    Direction.DL: Vec2d.unit().rotated_degrees(180 - 30) * IMPULSE_SCALE,
-    Direction.D: Vec2d.unit().rotated_degrees(180) * IMPULSE_SCALE,
-    Direction.DR: Vec2d.unit().rotated_degrees(180 + 30) * IMPULSE_SCALE,
-}
+class JumpController:
+    """Control the frog's jumps.
+
+    We track which jumps the frog has available.
+
+    """
+    IMPULSE_SCALE = 26
+    JUMP_IMPULSES = {
+        Direction.UL: Vec2d.unit().rotated_degrees(30) * IMPULSE_SCALE,
+        Direction.U: Vec2d.unit() * IMPULSE_SCALE,
+        Direction.UR: Vec2d.unit().rotated_degrees(-30) * IMPULSE_SCALE,
+        Direction.DL: Vec2d.unit().rotated_degrees(180 - 30) * IMPULSE_SCALE,
+        Direction.D: Vec2d.unit().rotated_degrees(180) * IMPULSE_SCALE,
+        Direction.DR: Vec2d.unit().rotated_degrees(180 + 30) * IMPULSE_SCALE,
+    }
+
+    def __init__(self, pc, hud):
+        self.hud = hud
+        self.reset()
+
+    def reset(self):
+        """Set all directions back to available."""
+        self.available = dict.fromkeys(Direction, True)
+        for d in Direction:
+            self.hud.set_available(d, True)
+
+    def jump(self, direction):
+        """Request a jump in the given direction."""
+        if self.available[direction]:
+            pc.body.velocity = self.JUMP_IMPULSES[direction]
+            self.available[direction] = False
+            self.hud.set_available(direction, False)
+        else:
+            self.hud.warn_unavailable(direction)
 
 
-def jump(direction):
-    pc.body.velocity = JUMP_IMPULSES[direction]
+hud = HUD(WIDTH, HEIGHT)
+controls = JumpController(pc, hud)
 
 
 keyhandler = wtf.keys.KeyInputHandler(
-    jump=jump,
+    jump=controls.jump,
     window=window,
 )
 window.push_handlers(keyhandler)
@@ -243,5 +269,6 @@ def update_physics(dt):
 
 
 pyglet.clock.set_fps_limit(60)
+pyglet.clock.schedule(on_draw)
 pyglet.clock.schedule(update_physics)
 pyglet.app.run()
