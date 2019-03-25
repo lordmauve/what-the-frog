@@ -46,7 +46,10 @@ class WaterBatch:
                 void main() {
                     vec2 off = vec2(
                         sin(sin(60.0 * uv.x) + cos(uv.y) * t),
-                        sin(sin(60.0 * uv.y + 1.23) + (0.5 + 0.5 * sin(uv.x)) * t)
+                        sin(
+                            sin(60.0 * uv.y + 1.23)
+                            + (0.5 + 0.5 * sin(uv.x)) * t
+                        )
                     ) * 0.005;
                     vec3 diff = texture(diffuse, uv + off).rgb;
                     float refl_amount = 0.6 / (pow(vdepth * 2, 2) + 1);
@@ -159,6 +162,7 @@ class Water:
         self.velocities[-9] = 0
 
     def delete(self):
+        space.remove(self.shape)
         self.insts.remove(self)
 
     def pre_solve(arbiter, space, data):

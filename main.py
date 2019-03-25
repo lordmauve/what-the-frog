@@ -6,6 +6,8 @@ import pymunk
 from pymunk.vec2d import Vec2d
 import moderngl
 from pyrr import Matrix44
+from pyglet.window import key
+from pyglet.event import EVENT_UNHANDLED, EVENT_HANDLED
 
 import wtf.keys
 from wtf.directions import Direction
@@ -54,6 +56,7 @@ def create_platform(x, y):
     shape.friction = 0.6
     shape.elasticity = 0.6
     space.add(shape)
+    return shape
 
 
 def create_walls(space):
@@ -63,6 +66,7 @@ def create_walls(space):
         ((-5, HEIGHT + 5), (WIDTH + 5, HEIGHT + 5)),
         ((WIDTH + 5, -5), (WIDTH + 5, HEIGHT + 5)),
     ]
+    shapes = []
     for a, b in walls:
         a = Vec2d(*a) * SPACE_SCALE
         b = Vec2d(*b) * SPACE_SCALE
@@ -70,6 +74,8 @@ def create_walls(space):
         shape.friction = 0
         shape.elasticity = 0.6
         space.add(shape)
+        shapes.append(shape)
+    return shapes
 
 
 def water(y, x1=0, x2=WIDTH * SPACE_SCALE, bot_y=0):
@@ -92,16 +98,35 @@ handler = space.add_collision_handler(
 handler.begin = on_collect
 
 
-pc = Frog(6, 7)
-create_platform(-1, 7)
-create_platform(5, 6)
-create_platform(5, 17)
-create_platform(13, 9)
-create_walls(space)
+class Level:
+    def __init__(self):
+        self.create()
 
-water(6.5)
-Fly(3, 10)
-Fly(16, 16)
+    def create(self):
+        self.pc = Frog(6, 7)
+
+        self.static_shapes = [
+            create_platform(-1, 7),
+            create_platform(5, 6),
+            create_platform(5, 17),
+            create_platform(13, 9),
+            *create_walls(space)
+        ]
+
+        water(6.5)
+        Fly(3, 10)
+        Fly(16, 16)
+
+    def reload(self):
+        for f in Fly.insts[:]:
+            f.delete()
+        for w in Water.insts[:]:
+            w.delete()
+        self.pc.delete()
+        space.remove(*self.static_shapes)
+        assert not space.bodies, f"Space contains bodies: {space.bodies}"
+        assert not space.shapes, f"Space contains shapes: {space.shapes}"
+        self.create()
 
 
 fps_display = pyglet.clock.ClockDisplay()
@@ -120,10 +145,12 @@ rock.scale = max(
 
 water_batch = WaterBatch(mgl)
 
+level = Level()
+
 
 def on_draw(dt):
     # Update graphical things
-    pc.update(dt)
+    level.pc.update(dt)
     for f in Fly.insts:
         f.update(dt)
 
@@ -177,6 +204,7 @@ class JumpController:
     }
 
     def __init__(self, pc, hud):
+        self.pc = pc
         self.hud = hud
         self.reset()
 
@@ -186,10 +214,14 @@ class JumpController:
         for d in Direction:
             self.hud.set_available(d, True)
 
+    def all_available(self):
+        """return True if all directions are available."""
+        return all(self.available.values())
+
     def jump(self, direction):
         """Request a jump in the given direction."""
         if self.available[direction]:
-            pc.body.velocity = self.JUMP_IMPULSES[direction]
+            self.pc.body.velocity = self.JUMP_IMPULSES[direction]
             self.available[direction] = False
             self.hud.set_available(direction, False)
         else:
@@ -197,7 +229,7 @@ class JumpController:
 
 
 hud = HUD(WIDTH, HEIGHT)
-controls = JumpController(pc, hud)
+controls = JumpController(level.pc, hud)
 
 
 keyhandler = wtf.keys.KeyInputHandler(
@@ -205,6 +237,20 @@ keyhandler = wtf.keys.KeyInputHandler(
     window=window,
 )
 window.push_handlers(keyhandler)
+
+
+def on_key_press(symbol, modifiers):
+    if symbol == key.ESCAPE:
+        if controls.all_available():
+            pyglet.app.exit()
+        level.reload()
+        controls.reset()
+        controls.pc = level.pc
+        return EVENT_HANDLED
+    return EVENT_UNHANDLED
+
+
+window.push_handlers(on_key_press)
 
 
 def update_physics(dt):

@@ -90,7 +90,6 @@ class Frog:
             self.tongue.fly_pos = pos
             self.tongue.length = 0
             self.tongue.t = 0
-            pyglet.clock.unschedule(self._stop_lick)
         else:
             self.tongue = Tongue(self.mouth_pos, pos)
             self.tongue.t = 0
@@ -113,6 +112,12 @@ class Frog:
                 self.tongue.length = 400 * t * (0.1 - t)
                 self.tongue.mouth_pos = self.mouth_pos
                 self.tongue.recalc_verts()
+
+    def delete(self):
+        if self.tongue:
+            self.tongue.delete()
+        self.sprite.delete()
+        space.remove(self.body, self.shape)
 
 
 class Fly:
