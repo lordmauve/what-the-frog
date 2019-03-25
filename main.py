@@ -495,7 +495,7 @@ water_shader = mgl.program(
             uv = uv_pos(gl_Position);
 
             vdepth = depth;
-            refl_uv = uv_pos(mvp * vec4(vert.x, vert.y + 4 * depth, 0, 1.0));
+            refl_uv = uv_pos(mvp * vec4(vert.x, vert.y + 2 * depth, 0, 1.0));
         }
     ''',
     fragment_shader='''
@@ -514,7 +514,7 @@ water_shader = mgl.program(
                 sin(sin(60.0 * uv.y + 1.23) + (0.5 + 0.5 * sin(uv.x)) * t)
             ) * 0.005;
             vec3 diff = texture(diffuse, uv + off).rgb;
-            float refl_amount = 0.6 / (pow(vdepth * 3, 2) + 1);
+            float refl_amount = 0.6 / (pow(vdepth * 2, 2) + 1);
 
             vec3 refl_diff = texture(diffuse, refl_uv).rgb;
 
