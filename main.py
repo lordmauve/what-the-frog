@@ -100,18 +100,28 @@ handler.begin = on_collect
 
 
 class Level:
-    def __init__(self):
+    def __init__(self, name='level1'):
+        self.name = name
+        self.static_shapes = []
+        self.objs = []
+        self.pc = None
         self.create()
+        if self.pc is None:
+            self.pc = Frog(6, 7)
 
     def create(self):
+        from wtf.level_loader import load_level
+        load_level(self)
+
+    def create_(self):
         self.pc = Frog(6, 7)
 
         self.static_shapes = [
+            *create_walls(space),
             create_platform(-1, 7),
             create_platform(5, 6),
             create_platform(5, 17),
             create_platform(13, 9),
-            *create_walls(space)
         ]
 
         water(6.5)
@@ -125,6 +135,13 @@ class Level:
         ]
 
     def reload(self):
+        self.delete()
+        self.create()
+
+    def __del__(self):
+        self.delete()
+
+    def delete(self):
         for o in self.objs:
             o.delete()
         for f in Fly.insts[:]:
@@ -135,7 +152,6 @@ class Level:
         space.remove(*self.static_shapes)
         assert not space.bodies, f"Space contains bodies: {space.bodies}"
         assert not space.shapes, f"Space contains shapes: {space.shapes}"
-        self.create()
 
 
 fps_display = pyglet.clock.ClockDisplay()
@@ -252,6 +268,8 @@ window.push_handlers(keyhandler)
 def on_key_press(symbol, modifiers):
     if symbol == key.ESCAPE:
         if controls.all_available():
+            pyglet.clock.unschedule(on_draw)
+            pyglet.clock.unschedule(update_physics)
             pyglet.app.exit()
         level.reload()
         controls.reset()
