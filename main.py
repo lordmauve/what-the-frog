@@ -111,6 +111,9 @@ class Level:
 
     def create(self):
         from wtf.level_loader import load_level
+        self.static_shapes = [
+            *create_walls(space),
+        ]
         load_level(self)
 
     def create_(self):
@@ -136,7 +139,7 @@ class Level:
 
     def reload(self):
         self.delete()
-        self.create()
+        self.create_()
 
     def __del__(self):
         self.delete()
@@ -149,6 +152,7 @@ class Level:
         for w in Water.insts[:]:
             w.delete()
         self.pc.delete()
+        self.pc = None
         space.remove(*self.static_shapes)
         assert not space.bodies, f"Space contains bodies: {space.bodies}"
         assert not space.shapes, f"Space contains shapes: {space.shapes}"
@@ -159,12 +163,8 @@ fps_display = pyglet.clock.ClockDisplay()
 
 offscreen = OffscreenBuffer(WIDTH, HEIGHT, mgl)
 
-rock = pyglet.sprite.Sprite(
-    pyglet.resource.image('sprites/rock_sm.png')
-)
-rock.scale = max(
-    WIDTH / rock.width,
-    HEIGHT / rock.height
+background = pyglet.sprite.Sprite(
+    pyglet.resource.image('backgrounds/level1.png')
 )
 
 
@@ -190,7 +190,7 @@ def on_draw(dt):
         fbuf.clear(0.13, 0.1, 0.1)
         gl.glLoadIdentity()
         gl.glScalef(PIXEL_SCALE, PIXEL_SCALE, 1)
-        rock.draw()
+        background.draw()
         RockPoly.batch.draw()
         actor_sprites.draw()
 
@@ -271,6 +271,7 @@ def on_key_press(symbol, modifiers):
             pyglet.clock.unschedule(on_draw)
             pyglet.clock.unschedule(update_physics)
             pyglet.app.exit()
+            return EVENT_HANDLED
         level.reload()
         controls.reset()
         controls.pc = level.pc

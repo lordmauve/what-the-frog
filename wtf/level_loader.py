@@ -4,6 +4,7 @@ import pyglet.resource
 from xml.etree.ElementTree import parse
 from pymunk import Vec2d
 
+from .water import Water
 from .geom import SPACE_SCALE
 from .poly import RockPoly
 
@@ -91,5 +92,16 @@ def load_level(level):
                 [(2 * x, 2 * (height - y)) for x, y in loop],
             )
             level.objs.append(
-                RockPoly(verts.reshape(-1) * SPACE_SCALE)
+                RockPoly(
+                    verts.reshape(-1) * SPACE_SCALE,
+                    draw=False
+                )
             )
+
+    for r in doc.findall('.//{http://www.w3.org/2000/svg}rect'):
+        x1 = float(r.attrib['x']) * 2 * SPACE_SCALE
+        y = (height - float(r.attrib['y'])) * 2 * SPACE_SCALE
+        x2 = x1 + float(r.attrib['width']) * 2 * SPACE_SCALE
+        y_bot = y - float(r.attrib['height']) * 2 * SPACE_SCALE
+        assert y > y_bot
+        Water(y, round(x1), round(x2), y_bot)
