@@ -45,10 +45,10 @@ class WaterBatch:
 
                 void main() {
                     vec2 off = vec2(
-                        sin(sin(60.0 * uv.x) + cos(uv.y) * t),
+                        sin(sin(60.0 * uv.x) + cos(uv.y + t) + 0.1 * t),
                         sin(
-                            sin(60.0 * uv.y + 1.23)
-                            + (0.5 + 0.5 * sin(uv.x)) * t
+                            sin(60.0 * uv.y + 1.23 + 0.6 * t)
+                            + (0.5 + 0.5 * sin(uv.x * 30 + t))
                         )
                     ) * 0.005;
                     vec3 diff = texture(diffuse, uv + off).rgb;
@@ -178,6 +178,9 @@ class Water:
 
         a = round(bb.left - inst.x1) * inst.SUBDIV
         b = round(bb.right - inst.x1) * inst.SUBDIV
+        if a < 0 or b > len(inst.levels):
+            return False
+
         levels = inst.levels[a:b] + inst.y
         frac_immersed = float(np.mean(np.clip(
             (levels - bb.bottom) / (bb.top - bb.bottom),
