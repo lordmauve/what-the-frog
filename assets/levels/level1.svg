@@ -105,16 +105,6 @@
      y="85.8321"
      sodipodi:absref="/home/mauve/dev/pyweek27/source/fly.png" />
   <image
-     sodipodi:absref="/home/mauve/dev/pyweek27/source/fly.png"
-     y="462.13666"
-     x="391.2963"
-     id="image12749"
-     xlink:href="file:///home/mauve/dev/pyweek27/source/fly.png"
-     style="image-rendering:optimizeQuality"
-     preserveAspectRatio="none"
-     height="14.5"
-     width="19.5" />
-  <image
      width="19.5"
      height="14.5"
      preserveAspectRatio="none"
@@ -144,9 +134,24 @@
      x="135.54913"
      y="184.60449"
      sodipodi:absref="/home/mauve/dev/pyweek27/assets/sprites/platform.png" />
-  <path
-     style="fill:#808080;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="m 118.53018,278.93281 18.98784,55.23737 71.34827,-55.23737 z"
-     id="path4150"
-     inkscape:connector-curvature="0" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/source/butterfly.png"
+     y="320.79822"
+     x="179.22597"
+     id="image5791"
+     xlink:href="file:///home/mauve/dev/pyweek27/source/butterfly.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="18.688524"
+     width="23.606558" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/sprites/fish.png"
+     y="547.54425"
+     x="389.09784"
+     id="image5968"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/sprites/fish.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="14"
+     width="28.5" />
 </svg>

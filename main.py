@@ -53,7 +53,7 @@ def on_collect(arbiter, space, data):
     """Called when a collectible is hit"""
     fly, frog = arbiter.shapes
     frog.obj.lick(fly.obj.sprite.position)
-    fly.obj.collect()
+    fly.obj.collect(frog, controls)
     space.remove(fly)
     return False
 

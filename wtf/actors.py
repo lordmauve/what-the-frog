@@ -1,5 +1,5 @@
 import random
-from math import sin
+from math import sin, cos, copysign
 
 from pyglet import gl
 import pyglet.resource
@@ -122,10 +122,11 @@ class Frog:
 
 
 class Fly:
+    DIMS = (1, 4)
     SPRITE = pyglet.resource.image('sprites/fly.png')
-    SPRITE.anchor_x = SPRITE.width // 8
+    SPRITE.anchor_x = SPRITE.width // (2 * DIMS[1])
     SPRITE.anchor_y = SPRITE.height // 3
-    seq = pyglet.image.ImageGrid(SPRITE, 1, 4).get_texture_sequence()
+    seq = pyglet.image.ImageGrid(SPRITE, *DIMS).get_texture_sequence()
     ANIM = seq.get_animation(0.05)
 
     CATCH_RADIUS = 2.5
@@ -153,19 +154,22 @@ class Fly:
         self.update(random.uniform(0, 5))
         self.insts.append(self)
 
+    def wander(self, t):
+        """Return a small lissajous wander."""
+        return Vec2d(
+            0.5 * sin(2 * self.t),
+            0.5 * sin(3 * self.t)
+        )
+
     def update(self, dt):
         self.t += dt
         self.sprite._rotation = 10 * sin(self.t)
         self.sprite._x, self.sprite._y = phys_to_screen(
-            self.pos
-            + Vec2d(
-                0.5 * sin(2 * self.t),
-                0.5 * sin(3 * self.t)
-            )  # lissajous wander
+            self.pos + self.wander(self.t)
         )
         self.sprite._update_position()
 
-    def collect(self):
+    def collect(self, pc, controls):
         """Called when this Fly is collected."""
         self.delete()
 
@@ -174,3 +178,33 @@ class Fly:
         self.insts.remove(self)
         self.sprite.delete()
         space.remove(self.shape)
+
+
+class Butterfly(Fly):
+    DIMS = (1, 6)
+    SPRITE = pyglet.resource.image('sprites/butterfly.png')
+    SPRITE.anchor_x = SPRITE.width // (2 * DIMS[1])
+    SPRITE.anchor_y = SPRITE.height // 3
+    seq = pyglet.image.ImageGrid(SPRITE, *DIMS).get_texture_sequence()
+    ANIM = seq.get_animation(0.1)
+
+    def collect(self, pc, controls):
+        """Called when this Fly is collected."""
+        controls.reset()
+        self.delete()
+
+
+class Fish(Fly):
+    ANIM = SPRITE = pyglet.resource.image('sprites/fish.png')
+    SPRITE.anchor_x = SPRITE.width // 2
+    SPRITE.anchor_y = SPRITE.height // 3
+
+    def wander(self, t):
+        """Return a small lissajous wander."""
+        xperiod = 0.11
+        vx = cos(xperiod * self.t)
+        self.sprite._scale_x = copysign(max(0.2, abs(vx)), vx)
+        return Vec2d(
+            2.0 * sin(xperiod * self.t),
+            0.2 * sin(0.2 * self.t),
+        )
