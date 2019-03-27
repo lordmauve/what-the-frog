@@ -1,6 +1,8 @@
 import pymunk
 from pymunk import Vec2d
 
+from .geom import SPACE_SCALE
+
 
 GRAVITY = Vec2d(0, -50)
 BUOYANCY = Vec2d(0, 500)
@@ -31,3 +33,22 @@ def box(body, x, y, w, h):
         ]
     )
     return shape
+
+
+def create_walls(space, width, height):
+    walls = [
+        ((-5, -5), (width + 5, -5)),
+        ((-5, -5), (-5, height + 5)),
+        ((-5, height + 5), (width + 5, height + 5)),
+        ((width + 5, -5), (width + 5, height + 5)),
+    ]
+    shapes = []
+    for a, b in walls:
+        a = Vec2d(*a) * SPACE_SCALE
+        b = Vec2d(*b) * SPACE_SCALE
+        shape = pymunk.Segment(space.static_body, a, b, 10 * SPACE_SCALE)
+        shape.friction = 0
+        shape.elasticity = 0.6
+        space.add(shape)
+        shapes.append(shape)
+    return shapes

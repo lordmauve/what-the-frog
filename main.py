@@ -2,7 +2,6 @@ import pyglet
 from pyglet import gl
 import pyglet.sprite
 import pyglet.resource
-import pymunk
 from pymunk.vec2d import Vec2d
 import moderngl
 from pyrr import Matrix44
@@ -12,14 +11,16 @@ from pyglet.event import EVENT_UNHANDLED, EVENT_HANDLED
 import wtf.keys
 from wtf.directions import Direction
 from wtf.physics import (
-    space, box, COLLISION_TYPE_FROG, COLLISION_TYPE_COLLECTIBLE
+    space, COLLISION_TYPE_FROG, COLLISION_TYPE_COLLECTIBLE,
+    create_walls
 )
 from wtf.water import Water, WaterBatch
-from wtf.geom import SPACE_SCALE, phys_to_screen
+from wtf.geom import SPACE_SCALE
 from wtf.actors import actor_sprites, Frog, Fly
 from wtf.hud import HUD
 from wtf.offscreen import OffscreenBuffer
 from wtf.poly import RockPoly
+from wtf.scenery import Platform
 
 
 WIDTH = 1600   # Width in hidpi pixels
@@ -35,48 +36,6 @@ window = pyglet.window.Window(
 
 
 mgl = moderngl.create_context()
-
-platform = pyglet.resource.image('sprites/platform.png')
-platforms = []
-
-
-def create_platform(x, y):
-    """Create a platform.
-
-    Here x and y are in physics coordinates.
-
-    """
-    s = pyglet.sprite.Sprite(platform, batch=actor_sprites)
-    s.position = phys_to_screen(x, y)
-    platforms.append(s)
-
-    shape = box(
-        space.static_body,
-        x, y, 3, 1
-    )
-    shape.friction = 0.6
-    shape.elasticity = 0.6
-    space.add(shape)
-    return shape
-
-
-def create_walls(space):
-    walls = [
-        ((-5, -5), (WIDTH + 5, -5)),
-        ((-5, -5), (-5, HEIGHT + 5)),
-        ((-5, HEIGHT + 5), (WIDTH + 5, HEIGHT + 5)),
-        ((WIDTH + 5, -5), (WIDTH + 5, HEIGHT + 5)),
-    ]
-    shapes = []
-    for a, b in walls:
-        a = Vec2d(*a) * SPACE_SCALE
-        b = Vec2d(*b) * SPACE_SCALE
-        shape = pymunk.Segment(space.static_body, a, b, 10 * SPACE_SCALE)
-        shape.friction = 0
-        shape.elasticity = 0.6
-        space.add(shape)
-        shapes.append(shape)
-    return shapes
 
 
 def water(y, x1=0, x2=WIDTH * SPACE_SCALE, bot_y=0):
@@ -111,27 +70,23 @@ class Level:
 
     def create(self):
         from wtf.level_loader import load_level
-        self.static_shapes = [
-            *create_walls(space),
-        ]
+        self.static_shapes = create_walls(space, WIDTH, HEIGHT)
         load_level(self)
 
     def create_(self):
         self.pc = Frog(6, 7)
 
-        self.static_shapes = [
-            *create_walls(space),
-            create_platform(-1, 7),
-            create_platform(5, 6),
-            create_platform(5, 17),
-            create_platform(13, 9),
-        ]
+        self.static_shapes = create_walls(space, WIDTH, HEIGHT)
 
         water(6.5)
         Fly(3, 10)
         Fly(16, 16)
 
         self.objs = [
+            Platform(-1, 7),
+            Platform(5, 6),
+            Platform(5, 17),
+            Platform(13, 9),
             RockPoly(
                 [16, 5, 26, 5, 26, 10, 22, 10, 19, 6],
             )

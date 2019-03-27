@@ -7,6 +7,8 @@ from pymunk import Vec2d
 from .water import Water
 from .geom import SPACE_SCALE
 from .poly import RockPoly
+from .actors import Fly, Frog
+from .scenery import Platform
 
 
 COMMA_WSP = re.compile(r'(?:\s+,?\s*|,\s*)')
@@ -83,25 +85,46 @@ def parse_path(path_str):
 
 
 def load_level(level):
+    scale = 2 * SPACE_SCALE
     f = pyglet.resource.file(f'levels/{level.name}.svg')
     doc = parse(f)
     height = float(doc.getroot().attrib['height'])
     for path in doc.findall('.//{http://www.w3.org/2000/svg}path'):
         for loop in parse_path(path.attrib['d']):
             verts = np.array(
-                [(2 * x, 2 * (height - y)) for x, y in loop],
+                [(x, (height - y)) for x, y in loop],
             )
             level.objs.append(
                 RockPoly(
-                    verts.reshape(-1) * SPACE_SCALE,
-                    draw=False
+                    verts.reshape(-1) * scale,
+                    draw='fill:none' not in path.attrib.get('style')
                 )
             )
 
     for r in doc.findall('.//{http://www.w3.org/2000/svg}rect'):
-        x1 = float(r.attrib['x']) * 2 * SPACE_SCALE
-        y = (height - float(r.attrib['y'])) * 2 * SPACE_SCALE
-        x2 = x1 + float(r.attrib['width']) * 2 * SPACE_SCALE
-        y_bot = y - float(r.attrib['height']) * 2 * SPACE_SCALE
+        x1 = float(r.attrib['x']) * scale
+        y = (height - float(r.attrib['y'])) * scale
+        x2 = x1 + float(r.attrib['width']) * scale
+        y_bot = y - float(r.attrib['height']) * scale
         assert y > y_bot
         Water(y, round(x1), round(x2), y_bot)
+
+    for r in doc.findall('.//{http://www.w3.org/2000/svg}image'):
+        w = float(r.attrib['width']) * scale
+        h = float(r.attrib['height']) * scale
+
+        halfw = w / 2
+        halfh = h / 2
+
+        x = float(r.attrib['x']) * scale + halfw
+        y = (height - float(r.attrib['y'])) * scale - halfh
+
+        href = r.attrib['{http://www.w3.org/1999/xlink}href']
+        if 'fly.png' in href:
+            Fly(x, y)
+        elif 'jumper.png' in href:
+            level.pc = Frog(x, y)
+        elif 'platform.png' in href:
+            level.objs.append(
+                Platform(x - halfw, y - halfh)
+            )

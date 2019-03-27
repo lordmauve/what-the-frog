@@ -5,6 +5,7 @@ from pyglet import gl
 import pyglet.resource
 import pyglet.graphics
 import pyglet.sprite
+import pyglet.image
 import pymunk
 from pymunk import Vec2d
 
@@ -122,8 +123,10 @@ class Frog:
 
 class Fly:
     SPRITE = pyglet.resource.image('sprites/fly.png')
-    SPRITE.anchor_x = SPRITE.width // 2
+    SPRITE.anchor_x = SPRITE.width // 8
     SPRITE.anchor_y = SPRITE.height // 3
+    seq = pyglet.image.ImageGrid(SPRITE, 1, 4).get_texture_sequence()
+    ANIM = seq.get_animation(0.05)
 
     CATCH_RADIUS = 2.5
 
@@ -133,7 +136,7 @@ class Fly:
         self.pos = Vec2d(x + 0.5, y + 0.5)
         self.t = 0
         self.sprite = pyglet.sprite.Sprite(
-            self.SPRITE,
+            self.ANIM,
             batch=actor_sprites,
             usage='stream'
         )
@@ -152,7 +155,6 @@ class Fly:
 
     def update(self, dt):
         self.t += dt
-        self.sprite._scale_y *= -1
         self.sprite._rotation = 10 * sin(self.t)
         self.sprite._x, self.sprite._y = phys_to_screen(
             self.pos
