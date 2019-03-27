@@ -7,7 +7,7 @@ from pymunk import Vec2d
 from .water import Water
 from .geom import SPACE_SCALE
 from .poly import RockPoly
-from .actors import Butterfly, Fly, Frog, Fish
+from .actors import Butterfly, Fly, Frog, Fish, Goldfish
 from .scenery import Platform
 
 
@@ -124,6 +124,8 @@ def load_level(level):
             Butterfly(x, y)
         elif 'fly.png' in href:
             Fly(x, y)
+        elif 'goldfish.png' in href:
+            Goldfish(x, y)
         elif 'fish.png' in href:
             Fish(x, y)
         elif 'jumper.png' in href:

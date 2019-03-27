@@ -18,6 +18,19 @@ from .physics import (
 actor_sprites = pyglet.graphics.Batch()
 
 
+def center(obj):
+    if isinstance(obj, pyglet.image.AbstractImageSequence):
+        seq = obj.get_texture_sequence()
+        for img in seq.items:
+            img.anchor_x = img.width // 2
+            img.anchor_y = img.height // 2
+        return seq
+    else:
+        obj.anchor_x = obj.width // 2
+        obj.anchor_y = obj.height // 2
+        return obj
+
+
 class Tongue:
     TEX = pyglet.resource.texture('sprites/tongue.png')
     ordering = pyglet.graphics.OrderedGroup(1)
@@ -124,9 +137,7 @@ class Frog:
 class Fly:
     DIMS = (1, 4)
     SPRITE = pyglet.resource.image('sprites/fly.png')
-    SPRITE.anchor_x = SPRITE.width // (2 * DIMS[1])
-    SPRITE.anchor_y = SPRITE.height // 3
-    seq = pyglet.image.ImageGrid(SPRITE, *DIMS).get_texture_sequence()
+    seq = center(pyglet.image.ImageGrid(SPRITE, *DIMS).get_texture_sequence())
     ANIM = seq.get_animation(0.05)
 
     CATCH_RADIUS = 2.5
@@ -156,9 +167,11 @@ class Fly:
 
     def wander(self, t):
         """Return a small lissajous wander."""
+        vx = cos(2 * t)
+        self.sprite._scale_x = copysign(1, vx)
         return Vec2d(
-            0.5 * sin(2 * self.t),
-            0.5 * sin(3 * self.t)
+            0.5 * sin(2 * t),
+            0.5 * sin(3 * t)
         )
 
     def update(self, dt):
@@ -183,28 +196,47 @@ class Fly:
 class Butterfly(Fly):
     DIMS = (1, 6)
     SPRITE = pyglet.resource.image('sprites/butterfly.png')
-    SPRITE.anchor_x = SPRITE.width // (2 * DIMS[1])
-    SPRITE.anchor_y = SPRITE.height // 3
-    seq = pyglet.image.ImageGrid(SPRITE, *DIMS).get_texture_sequence()
+    seq = center(pyglet.image.ImageGrid(SPRITE, *DIMS).get_texture_sequence())
     ANIM = seq.get_animation(0.1)
 
+    COLORS = [
+        (211, 167, 29),
+        (21, 115, 154),
+        (154, 52, 21),
+    ]
+
+    def __init__(self, x, y):
+        super().__init__(x, y)
+
+        # Pick a color at random but always the same color for the
+        # same level
+        hsh = hash((round(x), round(y)))
+        self.sprite.color = self.COLORS[hsh % len(self.COLORS)]
+
     def collect(self, pc, controls):
-        """Called when this Fly is collected."""
+        """Replenish jumps when the Butterfly is collected."""
         controls.reset()
-        self.delete()
+        super().collect(pc, controls)
 
 
 class Fish(Fly):
-    ANIM = SPRITE = pyglet.resource.image('sprites/fish.png')
-    SPRITE.anchor_x = SPRITE.width // 2
-    SPRITE.anchor_y = SPRITE.height // 3
+    ANIM = SPRITE = center(pyglet.resource.image('sprites/fish.png'))
 
     def wander(self, t):
         """Return a small lissajous wander."""
         xperiod = 0.11
-        vx = cos(xperiod * self.t)
-        self.sprite._scale_x = copysign(max(0.2, abs(vx)), vx)
+        vx = cos(xperiod * t)
+        self.sprite._scale_x = copysign(max(0.3, abs(vx)), vx)
         return Vec2d(
-            2.0 * sin(xperiod * self.t),
-            0.2 * sin(0.2 * self.t),
+            2.0 * sin(xperiod * t),
+            0.2 * sin(0.2 * t),
         )
+
+
+class Goldfish(Fish):
+    ANIM = SPRITE = center(pyglet.resource.image('sprites/goldfish.png'))
+
+    def collect(self, pc, controls):
+        """Replenish jumps when this Goldfish is collected."""
+        controls.reset()
+        super().collect(pc, controls)

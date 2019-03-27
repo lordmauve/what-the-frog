@@ -146,12 +146,42 @@
      width="23.606558" />
   <image
      sodipodi:absref="/home/mauve/dev/pyweek27/assets/sprites/fish.png"
-     y="547.54425"
-     x="389.09784"
+     y="546.39349"
+     x="654.35229"
      id="image5968"
      xlink:href="file:///home/mauve/dev/pyweek27/assets/sprites/fish.png"
      style="image-rendering:optimizeQuality"
      preserveAspectRatio="none"
      height="14"
      width="28.5" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/source/butterfly.png"
+     y="285.12408"
+     x="290.27609"
+     id="image5995"
+     xlink:href="file:///home/mauve/dev/pyweek27/source/butterfly.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="18.688524"
+     width="23.606558" />
+  <image
+     width="23.606558"
+     height="18.688524"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/source/butterfly.png"
+     id="image5993"
+     x="480.72992"
+     y="289.15182"
+     sodipodi:absref="/home/mauve/dev/pyweek27/source/butterfly.png" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/sprites/goldfish.png"
+     y="548.46881"
+     x="381.24081"
+     id="image6056"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/sprites/goldfish.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="11"
+     width="23.5" />
 </svg>
