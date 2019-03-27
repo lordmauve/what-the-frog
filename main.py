@@ -27,7 +27,6 @@ from wtf.actors import actor_sprites, Frog, Fly
 from wtf.hud import HUD
 from wtf.offscreen import OffscreenBuffer
 from wtf.poly import RockPoly
-from wtf.scenery import Platform
 
 
 WIDTH = 1600   # Width in hidpi pixels
@@ -55,6 +54,8 @@ def on_collect(arbiter, space, data):
     frog.obj.lick(fly.obj.sprite.position)
     fly.obj.collect(frog, controls)
     space.remove(fly)
+    if not Fly.insts:
+        level.win()
     return False
 
 
@@ -68,47 +69,51 @@ handler.begin = on_collect
 class Level:
     def __init__(self, name='level1'):
         self.name = name
-        self.static_shapes = []
-        self.objs = []
-        self.pc = None
+        self.won = None
         self.create()
         if self.pc is None:
             self.pc = Frog(6, 7)
 
+    def win(self, *_):
+        if self.won is not None:
+            return
+        self.won = True
+        hud.show_card('3star')
+
+    def fail(self, *_):
+        if self.won is not None:
+            return
+        self.won = False
+
+        flies_remaining = len(Fly.insts)
+        if flies_remaining == 1:
+            hud.show_card('2star')
+        elif flies_remaining == 2:
+            hud.show_card('1star')
+        else:
+            hud.show_card('fail')
+
     def create(self):
         from wtf.level_loader import load_level
+        self.won = None
+        self.pc = None
+        self.objs = []
         self.static_shapes = create_walls(space, WIDTH, HEIGHT)
         load_level(self)
 
-    def create_(self):
-        self.pc = Frog(6, 7)
-
-        self.static_shapes = create_walls(space, WIDTH, HEIGHT)
-
-        water(6.5)
-        Fly(3, 10)
-        Fly(16, 16)
-
-        self.objs = [
-            Platform(-1, 7),
-            Platform(5, 6),
-            Platform(5, 17),
-            Platform(13, 9),
-            RockPoly(
-                [16, 5, 26, 5, 26, 10, 22, 10, 19, 6],
-            )
-        ]
-
     def reload(self):
         self.delete()
-        self.create_()
+        self.create()
 
     def __del__(self):
         self.delete()
 
     def delete(self):
         for o in self.objs:
-            o.delete()
+            try:
+                o.delete()
+            except KeyError:
+                raise KeyError(f"Couldn't delete {o}")
         for f in Fly.insts[:]:
             f.delete()
         for w in Water.insts[:]:
@@ -138,6 +143,7 @@ level = Level()
 def on_draw(dt):
     # Update graphical things
     level.pc.update(dt)
+
     for f in Fly.insts:
         f.update(dt)
 
@@ -194,10 +200,13 @@ class JumpController:
     def __init__(self, pc, hud):
         self.pc = pc
         self.hud = hud
+        self.available = None
         self.reset()
 
     def reset(self):
         """Set all directions back to available."""
+        if self.available and not any(self.available.values()):
+            pyglet.clock.unschedule(level.fail)
         self.available = dict.fromkeys(Direction, True)
         for d in Direction:
             self.hud.set_available(d, True)
@@ -212,6 +221,8 @@ class JumpController:
             self.pc.body.velocity = self.JUMP_IMPULSES[direction]
             self.available[direction] = False
             self.hud.set_available(direction, False)
+            if not any(self.available.values()):
+                pyglet.clock.schedule_once(level.fail, 3)
         else:
             self.hud.warn_unavailable(direction)
 
@@ -245,6 +256,9 @@ window.push_handlers(on_key_press)
 
 
 def update_physics(dt):
+    if level.won is not None:
+        return
+
     for _ in range(3):
         space.step(1 / 180)
 

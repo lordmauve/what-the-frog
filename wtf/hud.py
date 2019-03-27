@@ -3,7 +3,7 @@ import pyglet.graphics
 import pyglet.sprite
 
 from .directions import Direction
-
+from .sprites import load_centered
 
 # Distance that the jump markers are inset from the edge
 INSET = 40
@@ -19,13 +19,12 @@ def tween(v, target, dt):
 
 class HUD:
     """The HUD, showing what jumps are available."""
-    arrow = pyglet.resource.image('sprites/arrow.png')
-    arrow.anchor_x = arrow.width // 2
-    arrow.anchor_y = arrow.height // 2
+    arrow = load_centered('arrow')
 
     def __init__(self, width, height):
         self.width = width
         self.height = height
+        self.card = None
 
         self.batch = pyglet.graphics.Batch()
         self.available = dict.fromkeys(Direction, True)
@@ -52,8 +51,25 @@ class HUD:
             s.opacity = 180
             self.arrows[d] = s
 
+    def show_card(self, name):
+        """Show a card."""
+        self.card = pyglet.sprite.Sprite(
+            load_centered(name, 'cards'),
+            batch=self.batch
+        )
+        self.card.position = (
+            self.width // 2,
+            self.height // 2
+        )
+
+    def clear_card(self):
+        if self.card:
+            self.card.delete()
+            self.card = None
+
     def set_available(self, dir, available):
         """Set the availability of the direction."""
+        self.clear_card()  # hack
         self.available[dir] = available
         s = self.arrows[dir]
         if available:
