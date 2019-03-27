@@ -1,10 +1,3 @@
-if not __debug__:
-    import pymunkoptions
-    pymunkoptions.options["debug"] = __debug__
-else:
-    import pymunk  # noqa: F401: importing to trigger message
-    print("Run with -O for best performance.")
-
 import pyglet
 from pyglet import gl
 import pyglet.sprite
@@ -263,7 +256,8 @@ def update_physics(dt):
         space.step(1 / 180)
 
 
-pyglet.clock.set_fps_limit(60)
-pyglet.clock.schedule(on_draw)
-pyglet.clock.schedule(update_physics)
-pyglet.app.run()
+def run():
+    pyglet.clock.set_fps_limit(60)
+    pyglet.clock.schedule(on_draw)
+    pyglet.clock.schedule(update_physics)
+    pyglet.app.run()
