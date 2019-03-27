@@ -1,3 +1,10 @@
+if not __debug__:
+    import pymunkoptions
+    pymunkoptions.options["debug"] = __debug__
+else:
+    import pymunk  # noqa: F401: importing to trigger message
+    print("Run with -O for best performance.")
+
 import pyglet
 from pyglet import gl
 import pyglet.sprite
