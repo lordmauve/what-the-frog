@@ -44,14 +44,19 @@ class WaterBatch:
                 out vec3 f_color;
 
                 void main() {
-                    vec2 off = vec2(
-                        sin(sin(60.0 * uv.x) + cos(uv.y + t) + 0.1 * t),
-                        sin(
-                            sin(60.0 * uv.y + 1.23 + 0.6 * t)
-                            + (0.5 + 0.5 * sin(uv.x * 30 + t))
-                        )
-                    ) * 0.005;
-                    vec3 diff = texture(diffuse, uv + off).rgb;
+                    float offx = 2 * cos(uv.y + 0.2 * t) +
+                                sin(3 * sin(60.0 * uv.x) + 0.5 * t);
+                    float offy = 2 * cos(uv.x + 107 + 0.3 * t) + sin(
+                        sin(60.0 * uv.y + 1.23 + 0.6 * t)
+                        + (0.5 + 0.5 * sin(uv.x * 30 + t))
+                        + 0.3 * t
+                    );
+                    vec2 offset_uv = uv + 0.005 * vec2(offx, offy);
+                    offset_uv = vec2(
+                        clamp(offset_uv.x, 0, 1),
+                        clamp(offset_uv.y, 0, 1)
+                    );
+                    vec3 diff = texture(diffuse, offset_uv).rgb;
                     float refl_amount = 0.6 / (pow(vdepth * 2, 2) + 1);
 
                     vec3 refl_diff = texture(diffuse, refl_uv).rgb;
