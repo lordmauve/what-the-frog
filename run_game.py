@@ -50,6 +50,23 @@ else:
     print("Run with -O for best performance.")
 
 
+def default_scale():
+    """Estimate the pixel scale that will fit on this screen."""
+    scale = 2.0
+    w = 1600
+    h = 1200
+    platform = pyglet.window.get_platform()
+    display = platform.get_default_display()
+    screen = display.get_default_screen()
+    avail_width = screen.width - 50
+    avail_height = screen.height - 50
+    while w > avail_width or h > avail_height:
+        scale *= 0.5
+        w *= 0.5
+        h *= 0.5
+    return scale
+
+
 from argparse import ArgumentParser
 parser = ArgumentParser()
 parser.add_argument(
@@ -61,8 +78,8 @@ parser.add_argument(
 parser.add_argument(
     '--pixel-scale',
     type=float,
-    default=2.0,
-    help="The scaling to use. Defaults to high-dpi screen."
+    default=default_scale(),
+    help="The scaling to use. Defaults to a value that will fit your screen."
 )
 
 args = parser.parse_args()
