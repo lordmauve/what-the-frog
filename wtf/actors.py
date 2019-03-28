@@ -67,6 +67,9 @@ class Tongue:
 class Frog:
     SPRITE = load_centered('jumper')
 
+    # How long it takes to lick, in seconds
+    TONGUE_SPEED = 0.2  # seconds
+
     def __init__(self, x, y):
         self.sprite = pyglet.sprite.Sprite(self.SPRITE, batch=actor_sprites)
         self.sprite.position = phys_to_screen(x, y)
@@ -97,20 +100,20 @@ class Frog:
 
     @property
     def mouth_pos(self):
-        return Vec2d(*self.sprite.position) + Vec2d(32, 20)
+        return Vec2d(*self.sprite.position)
 
     def update(self, dt):
         self.sprite.position = self.body.position / SPACE_SCALE
 
         # Update the tongue
         if self.tongue:
-            self.tongue.t += dt
+            self.tongue.t += dt / self.TONGUE_SPEED
             t = self.tongue.t
-            if t >= 0.1:
+            if t >= 1.0:
                 self.tongue.delete()
                 self.tongue = None
             else:
-                self.tongue.length = 400 * t * (0.1 - t)
+                self.tongue.length = 4.0 * t * (1.0 - t)
                 self.tongue.mouth_pos = self.mouth_pos
                 self.tongue.recalc_verts()
 
@@ -216,13 +219,15 @@ class Butterfly(Fly):
 class Fish(Fly):
     ANIM = SPRITE = center(pyglet.resource.image('sprites/fish.png'))
 
+    CATCH_RADIUS = 2
+
     def wander(self, t):
         """Return a small lissajous wander."""
-        xperiod = 0.11
+        xperiod = 0.3
         vx = cos(xperiod * t)
         self.sprite._scale_x = copysign(max(0.3, abs(vx)), vx)
         return Vec2d(
-            2.0 * sin(xperiod * t),
+            1.5 * sin(xperiod * t),
             0.2 * sin(0.2 * t),
         )
 

@@ -52,7 +52,7 @@ def create_walls(space, width, height):
         a = Vec2d(*a) * SPACE_SCALE
         b = Vec2d(*b) * SPACE_SCALE
         shape = pymunk.Segment(space.static_body, a, b, 10 * SPACE_SCALE)
-        shape.friction = 0.1
+        shape.friction = 0
         shape.elasticity = 0.6
         space.add(shape)
         shapes.append(shape)
