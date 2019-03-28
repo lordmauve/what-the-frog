@@ -20,17 +20,19 @@ class RockPoly:
     FRICTION = 1.0
     ELASTICITY = 0.6
 
-    def __init__(self, verts, draw=True):
+    def __init__(self, verts, color=(1, 1, 1), draw=True):
         self.indexes = earcut(verts)
 
         if draw:
+            size = len(verts) // 2
             self.dl = self.batch.add_indexed(
-                len(verts) // 2,
+                size,
                 gl.GL_TRIANGLES,
                 self.group,
                 self.indexes,
                 ('v2f/static', np.array(verts) / SPACE_SCALE),
-                ('t2f/static', np.array(verts) / (512 * SPACE_SCALE * 2))
+                ('t2f/static', np.array(verts) / (512 * SPACE_SCALE * 2)),
+                ('c3f/static', [c for _ in range(size) for c in color]),
             )
         else:
             self.dl = None

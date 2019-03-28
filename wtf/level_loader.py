@@ -108,10 +108,26 @@ def load_level(level):
             verts = np.array(
                 [(x, (height - y)) for x, y in loop],
             )
+            style = path.attrib.get('style', '')
+            mo = re.search(r'(?:[; ]|^)fill *: *([^;]+)(?:;|$)', style)
+            if mo:
+                fill = mo.group(1)
+            else:
+                fill = 'none'
+            draw = fill and fill != 'none'
+            if fill.startswith('#'):
+                color = int(fill[1:7], 16)
+                color, b = divmod(color, 256)
+                r, g = divmod(color, 256)
+                color = np.array([r, g, b]) / 255
+            else:
+                color = (0.5, 0.4, 0.3)
+
             level.objs.append(
                 RockPoly(
                     verts.reshape(-1) * scale,
-                    draw='fill:none' not in path.attrib.get('style')
+                    draw=draw,
+                    color=color,
                 )
             )
 
