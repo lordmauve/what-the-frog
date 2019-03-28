@@ -8,3 +8,6 @@ sys.path.append(str(root / 'vendor/earcut-python'))
 # Init asset paths here so that all submodules/subpackages can load assets
 pyglet.resource.path = ['assets/']
 pyglet.resource.reindex()
+
+
+PIXEL_SCALE = 0.5  # Scale down for non-hidpi screens

@@ -50,9 +50,25 @@ else:
     print("Run with -O for best performance.")
 
 
-from wtf.main import run
-if len(sys.argv) > 1:
-    run(sys.argv[1])
-else:
-    run()
+from argparse import ArgumentParser
+parser = ArgumentParser()
+parser.add_argument(
+    'levelname',
+    nargs='?',
+    help="The level to start on.",
+    default="level1"
+)
+parser.add_argument(
+    '--pixel-scale',
+    type=float,
+    default=2.0,
+    help="The scaling to use. Defaults to high-dpi screen."
+)
 
+args = parser.parse_args()
+
+import wtf
+wtf.PIXEL_SCALE *= args.pixel_scale
+
+import wtf.main
+wtf.main.run(args.levelname)

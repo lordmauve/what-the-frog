@@ -10,6 +10,7 @@ from pyrr import Matrix44
 from pyglet.window import key
 from pyglet.event import EVENT_UNHANDLED, EVENT_HANDLED
 
+from wtf import PIXEL_SCALE
 import wtf.keys
 from wtf.directions import Direction
 from wtf.physics import (
@@ -28,7 +29,6 @@ from wtf.level_loader import load_level
 WIDTH = 1600   # Width in hidpi pixels
 HEIGHT = 1200  # Height in hidpi pixels
 
-PIXEL_SCALE = 1.0  # Scale down for non-hidpi screens
 
 
 window = pyglet.window.Window(
