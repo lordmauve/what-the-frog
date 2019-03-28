@@ -17,6 +17,9 @@ class RockPoly:
         gl.GL_ONE_MINUS_SRC_ALPHA,
     )
 
+    FRICTION = 1.0
+    ELASTICITY = 0.6
+
     def __init__(self, verts, draw=True):
         self.indexes = earcut(verts)
 
@@ -37,8 +40,8 @@ class RockPoly:
         tris = verts.reshape(-1, 2)[self.indexes].reshape(-1, 3, 2)
         for tri in tris:
             shp = Poly(space.static_body, tri)
-            shp.friction = 0.6
-            shp.elasticity = 0.6
+            shp.friction = self.FRICTION
+            shp.elasticity = self.ELASTICITY
             space.add(shp)
             self.shapes.append(shp)
 

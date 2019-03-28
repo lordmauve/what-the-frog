@@ -14,7 +14,7 @@ class Scenery:
     DIMS = 1, 1
 
     # Friction amount, higher is more force
-    FRICTION = 0.6
+    FRICTION = 1.0
 
     # Elasticity, higher is more bouncy
     ELASTICITY = 0.6
