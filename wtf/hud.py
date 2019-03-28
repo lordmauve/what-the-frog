@@ -88,7 +88,7 @@ class HUD:
         for d, s in self.arrows.items():
             s.scale = tween(s.scale, 1, dt)
             if not self.available[d]:
-                s.opacity = tween(s.opacity, 70, dt)
+                s.opacity = tween(s.opacity, 0, dt)
                 s.color = tuple(
                     tween(c, t, dt) for c, t in zip(s.color, RED)
                 )

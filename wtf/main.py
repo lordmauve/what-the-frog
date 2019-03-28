@@ -1,3 +1,5 @@
+from enum import Enum
+
 import pyglet
 from pyglet import gl
 import pyglet.sprite
@@ -20,6 +22,7 @@ from wtf.actors import actor_sprites, Frog, Fly
 from wtf.hud import HUD
 from wtf.offscreen import OffscreenBuffer
 from wtf.poly import RockPoly
+from wtf.level_loader import load_level
 
 
 WIDTH = 1600   # Width in hidpi pixels
@@ -59,40 +62,72 @@ handler = space.add_collision_handler(
 handler.begin = on_collect
 
 
+class LevelState(Enum):
+    PLAYING = 1
+    FAILED = 2
+    WON = 3
+    PERFECT = 4
+
+
 class Level:
-    def __init__(self, name='level1'):
-        self.name = name
-        self.won = None
-        self.create()
-        if self.pc is None:
-            self.pc = Frog(6, 7)
+    def __init__(self, name=None):
+        self.state = LevelState.PLAYING
+        self.pc = None
+        self.objs = []
+        self.static_shapes = []
+        if name:
+            self.load(name)
+
+    def load(self, level_name):
+        """Load the given level name."""
+        self.name = level_name
+        self.reload()
+
+    def next_level(self):
+        """Progress to the next level."""
+        stem = self.name.rstrip('0123456789')
+        digit = int(self.name[len(stem):])
+        digit += 1
+        self.load(f"{stem}{digit}")
+
+    @property
+    def won(self):
+        if self.state == LevelState.PLAYING:
+            return None
+
+        return self.state.value > 2
 
     def win(self, *_):
-        if self.won is not None:
+        if self.state is not LevelState.PLAYING:
             return
-        self.won = True
+        self.state = LevelState.PERFECT
         hud.show_card('3star')
 
     def fail(self, *_):
-        if self.won is not None:
+        if self.state is not LevelState.PLAYING:
             return
-        self.won = False
 
         flies_remaining = len(Fly.insts)
         if flies_remaining == 1:
             hud.show_card('2star')
+            self.state = LevelState.WON
         elif flies_remaining == 2:
             hud.show_card('1star')
+            self.state = LevelState.WON
         else:
+            self.state = LevelState.FAILED
             hud.show_card('fail')
 
     def create(self):
-        from wtf.level_loader import load_level
-        self.won = None
+        self.state = LevelState.PLAYING
         self.pc = None
         self.objs = []
         self.static_shapes = create_walls(space, WIDTH, HEIGHT)
         load_level(self)
+        if self.pc is None:
+            self.pc = Frog(6, 7)
+        controls.reset()
+        controls.pc = self.pc
 
     def reload(self):
         self.delete()
@@ -111,7 +146,8 @@ class Level:
             f.delete()
         for w in Water.insts[:]:
             w.delete()
-        self.pc.delete()
+        if self.pc:
+            self.pc.delete()
         self.pc = None
         space.remove(*self.static_shapes)
         assert not space.bodies, f"Space contains bodies: {space.bodies}"
@@ -190,8 +226,8 @@ class JumpController:
         Direction.DR: Vec2d.unit().rotated_degrees(180 + 30) * IMPULSE_SCALE,
     }
 
-    def __init__(self, pc, hud):
-        self.pc = pc
+    def __init__(self, level, hud):
+        self.level = level
         self.hud = hud
         self.available = None
         self.reset()
@@ -199,7 +235,7 @@ class JumpController:
     def reset(self):
         """Set all directions back to available."""
         if self.available and not any(self.available.values()):
-            pyglet.clock.unschedule(level.fail)
+            pyglet.clock.unschedule(self.level.fail)
         self.available = dict.fromkeys(Direction, True)
         for d in Direction:
             self.hud.set_available(d, True)
@@ -211,17 +247,17 @@ class JumpController:
     def jump(self, direction):
         """Request a jump in the given direction."""
         if self.available[direction]:
-            self.pc.body.velocity = self.JUMP_IMPULSES[direction]
+            self.level.pc.body.velocity = self.JUMP_IMPULSES[direction]
             self.available[direction] = False
             self.hud.set_available(direction, False)
             if not any(self.available.values()):
-                pyglet.clock.schedule_once(level.fail, 3)
+                pyglet.clock.schedule_once(self.level.fail, 3)
         else:
             self.hud.warn_unavailable(direction)
 
 
 hud = HUD(WIDTH, HEIGHT)
-controls = JumpController(level.pc, hud)
+controls = JumpController(level, hud)
 
 
 keyhandler = wtf.keys.KeyInputHandler(
@@ -230,18 +266,31 @@ keyhandler = wtf.keys.KeyInputHandler(
 )
 window.push_handlers(keyhandler)
 
+last_key = None
+
 
 def on_key_press(symbol, modifiers):
+    global last_key
+
+    if level.state is not LevelState.PLAYING:
+        if symbol == key.ESCAPE and level.state is not LevelState.PERFECT:
+            level.reload()
+            return EVENT_HANDLED
+        elif level.won:
+            level.next_level()
+            return EVENT_HANDLED
+
     if symbol == key.ESCAPE:
-        if controls.all_available():
+        if last_key == key.ESCAPE:
             pyglet.clock.unschedule(on_draw)
             pyglet.clock.unschedule(update_physics)
             pyglet.app.exit()
             return EVENT_HANDLED
         level.reload()
-        controls.reset()
-        controls.pc = level.pc
+        last_key = symbol
         return EVENT_HANDLED
+
+    last_key = symbol
     return EVENT_UNHANDLED
 
 
@@ -256,7 +305,8 @@ def update_physics(dt):
         space.step(1 / 180)
 
 
-def run():
+def run(level_name="level1"):
+    level.load(level_name)
     pyglet.clock.set_fps_limit(60)
     pyglet.clock.schedule(on_draw)
     pyglet.clock.schedule(update_physics)

@@ -84,9 +84,16 @@ def parse_path(path_str):
     return verts
 
 
+class NoSuchLevel(Exception):
+    """Raised when the level name does not exist."""
+
+
 def load_level(level):
     scale = 2 * SPACE_SCALE
-    f = pyglet.resource.file(f'levels/{level.name}.svg')
+    try:
+        f = pyglet.resource.file(f'levels/{level.name}.svg')
+    except pyglet.resource.ResourceNotFoundException:
+        raise NoSuchLevel(f"Level {level.name} does not exist")
     doc = parse(f)
     height = float(doc.getroot().attrib['height'])
     for path in doc.findall('.//{http://www.w3.org/2000/svg}path'):
@@ -107,7 +114,7 @@ def load_level(level):
         x2 = x1 + float(r.attrib['width']) * scale
         y_bot = y - float(r.attrib['height']) * scale
         assert y > y_bot
-        Water(y, round(x1), round(x2), y_bot)
+        Water(y, x1, x2, y_bot)
 
     for r in doc.findall('.//{http://www.w3.org/2000/svg}image'):
         w = float(r.attrib['width']) * scale
