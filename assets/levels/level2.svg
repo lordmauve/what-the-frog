@@ -62,10 +62,10 @@
   </metadata>
   <path
      style="fill:#666666;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="m 0,600 801.83656,0.88836 -1.078,-111.18294 -190.74215,0.62999 -0.20595,-32.45199 -137.64147,-5.98437 -22.03637,-55.08742 -26.25963,-13.81091 -1.84448,136.40466 -250.84095,0.74504 -0.72594,-131.63545 -12.56443,-24.61273 -157.93265712,-75.50505 z"
+     d="m 0,600 801.83656,0.88836 -1.078,-111.18294 -190.74215,0.62999 -0.20595,-32.45199 -137.64147,-5.98437 -22.56375,-153.17918 -26.25963,-13.81091 -1.3171,234.49642 -250.84095,0.74504 L 170.989,384.29597 157.89719,363.90224 113.88467,333.64291 85.548005,294.28745 35.558872,263.07214 1.5466581,214.0373 Z"
      id="path10606"
      inkscape:connector-curvature="0"
-     sodipodi:nodetypes="cccccccccccccc" />
+     sodipodi:nodetypes="ccccccccccccccccc" />
   <rect
      style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.5;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#657182;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
      id="rect10608"
@@ -116,8 +116,8 @@
      sodipodi:absref="/home/mauve/dev/pyweek27/source/fly.png" />
   <image
      sodipodi:absref="/home/mauve/dev/pyweek27/source/fly.png"
-     y="442.04758"
-     x="715.1358"
+     y="441.5202"
+     x="716.19055"
      id="image20512"
      xlink:href="file:///home/mauve/dev/pyweek27/source/fly.png"
      style="image-rendering:optimizeQuality"
@@ -131,8 +131,8 @@
      style="image-rendering:optimizeQuality"
      xlink:href="file:///home/mauve/dev/pyweek27/source/fly.png"
      id="image12747"
-     x="533.71875"
-     y="415.67883"
+     x="511.569"
+     y="413.56934"
      sodipodi:absref="/home/mauve/dev/pyweek27/source/fly.png" />
   <image
      width="96"
@@ -150,14 +150,14 @@
      preserveAspectRatio="none"
      style="image-rendering:optimizeQuality"
      xlink:href="file:///home/mauve/dev/pyweek27/assets/sprites/fish.png"
-     id="image20576"
-     x="226.0688"
-     y="491.57977"
+     id="image20640"
+     x="255.60181"
+     y="425.6579"
      sodipodi:absref="/home/mauve/dev/pyweek27/assets/sprites/fish.png" />
   <image
      sodipodi:absref="/home/mauve/dev/pyweek27/assets/sprites/fish.png"
-     y="433.04114"
-     x="319.41418"
+     y="486.8334"
+     x="335.76282"
      id="image20573"
      xlink:href="file:///home/mauve/dev/pyweek27/assets/sprites/fish.png"
      style="image-rendering:optimizeQuality"

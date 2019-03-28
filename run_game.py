@@ -51,5 +51,8 @@ else:
 
 
 from wtf.main import run
-run()
+if len(sys.argv) > 1:
+    run(sys.argv[1])
+else:
+    run()
 
