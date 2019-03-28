@@ -18,8 +18,13 @@ COLLISION_TYPE_COLLECTIBLE = 2
 COLLISION_TYPE_FROG = 3
 
 
+def cbox(body, x, y, w, h):
+    """Create a box centered at x, y."""
+    return box(body, x - w * 0.5, y - h * 0.5, w, h)
+
+
 def box(body, x, y, w, h):
-    """Create a pymunk box."""
+    """Create a pymunk box, with the bottom-left at x, y."""
     bl = Vec2d(x, y)
     w = Vec2d(w, 0)
     h = Vec2d(0, h)

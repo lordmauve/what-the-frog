@@ -9,6 +9,7 @@ import moderngl
 from pyrr import Matrix44
 from pyglet.window import key
 from pyglet.event import EVENT_UNHANDLED, EVENT_HANDLED
+import pymunk.pyglet_util
 
 from wtf import PIXEL_SCALE
 import wtf.keys
@@ -28,7 +29,6 @@ from wtf.level_loader import load_level
 
 WIDTH = 1600   # Width in hidpi pixels
 HEIGHT = 1200  # Height in hidpi pixels
-
 
 
 window = pyglet.window.Window(
@@ -168,6 +168,8 @@ water_batch = WaterBatch(mgl)
 
 level = Level()
 
+pymunk_drawoptions = pymunk.pyglet_util.DrawOptions()
+
 
 def on_draw(dt):
     # Update graphical things
@@ -207,6 +209,10 @@ def on_draw(dt):
 
     hud.draw()
 
+#    gl.glLoadIdentity()
+#    gl.glScalef(PIXEL_SCALE / SPACE_SCALE, PIXEL_SCALE / SPACE_SCALE, 1)
+#    space.debug_draw(pymunk_drawoptions)
+
 #    fps_display.draw()
 
 
@@ -221,9 +227,9 @@ class JumpController:
         Direction.UL: Vec2d.unit().rotated_degrees(30) * IMPULSE_SCALE,
         Direction.U: Vec2d.unit() * IMPULSE_SCALE,
         Direction.UR: Vec2d.unit().rotated_degrees(-30) * IMPULSE_SCALE,
-        Direction.DL: Vec2d.unit().rotated_degrees(180 - 30) * IMPULSE_SCALE,
+        Direction.DL: Vec2d.unit().rotated_degrees(180 - 60) * IMPULSE_SCALE,
         Direction.D: Vec2d.unit().rotated_degrees(180) * IMPULSE_SCALE,
-        Direction.DR: Vec2d.unit().rotated_degrees(180 + 30) * IMPULSE_SCALE,
+        Direction.DR: Vec2d.unit().rotated_degrees(180 + 60) * IMPULSE_SCALE,
     }
 
     def __init__(self, level, hud):

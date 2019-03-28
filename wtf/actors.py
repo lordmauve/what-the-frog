@@ -11,9 +11,9 @@ from pymunk import Vec2d
 
 from .geom import phys_to_screen, SPACE_SCALE
 from .physics import (
-    space, box, COLLISION_TYPE_FROG, COLLISION_TYPE_COLLECTIBLE
+    space, cbox, COLLISION_TYPE_FROG, COLLISION_TYPE_COLLECTIBLE
 )
-from .sprites import center
+from .sprites import load_centered, center
 
 
 actor_sprites = pyglet.graphics.Batch()
@@ -65,19 +65,18 @@ class Tongue:
 
 
 class Frog:
-    SPRITE = pyglet.resource.image('sprites/jumper.png')
-    SPRITE.anchor_y = 5
+    SPRITE = load_centered('jumper')
 
     def __init__(self, x, y):
         self.sprite = pyglet.sprite.Sprite(self.SPRITE, batch=actor_sprites)
         self.sprite.position = phys_to_screen(x, y)
         self.body = pymunk.Body(5, pymunk.inf)
         self.body.position = (x, y)
-        self.shape = box(
+        self.shape = cbox(
             self.body,
             0, 0,
             w=self.SPRITE.width * SPACE_SCALE,
-            h=(self.SPRITE.height - 5) * SPACE_SCALE,
+            h=self.SPRITE.height * SPACE_SCALE,
         )
         self.shape.obj = self
         self.shape.collision_type = COLLISION_TYPE_FROG
@@ -128,7 +127,7 @@ class Fly:
     seq = center(pyglet.image.ImageGrid(SPRITE, *DIMS).get_texture_sequence())
     ANIM = seq.get_animation(0.05)
 
-    CATCH_RADIUS = 2.5
+    CATCH_RADIUS = 2
 
     insts = []
 

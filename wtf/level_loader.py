@@ -18,10 +18,17 @@ def path_toks(path):
     """Iterate over components of path as tokens."""
     toks = COMMA_WSP.split(path)
     for tok in toks:
-        if tok.isalpha():
+        if not tok:
+            continue
+        elif tok.isalpha():
             yield tok
         else:
-            v = float(tok)
+            try:
+                v = float(tok)
+            except ValueError:
+                raise ValueError(
+                    f"Couldn't parse {tok!r} from {path!r}"
+                )
             yield v
 
 
