@@ -74,18 +74,30 @@ def parse_path(path_str):
             elif op == 'L':
                 pos = Vec2d(tok, next())
                 line()
-            elif tok == 'H':
+            elif op == 'H':
                 pos.x = tok
                 line()
-            elif tok == 'h':
+            elif op == 'h':
                 pos.x += tok
                 line()
-            elif tok == 'V':
+            elif op == 'V':
                 pos.y = tok
                 line()
-            elif tok == 'v':
+            elif op == 'v':
                 pos.y += tok
                 line()
+            elif op == 'c':
+                for _ in range(3):
+                    next()
+                pos += Vec2d(next(), next())
+                line()
+            elif op == 'C':
+                for _ in range(3):
+                    next()
+                pos = Vec2d(next(), next())
+                line()
+            else:
+                raise ValueError(f"Unknown path op {op}")
     if path:
         verts.append(path)
     return verts
