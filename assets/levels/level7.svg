@@ -26,11 +26,11 @@
      inkscape:pageshadow="2"
      inkscape:window-width="3070"
      inkscape:window-height="1752"
-     id="namedview4188"
+     id="namedview5514"
      showgrid="false"
-     inkscape:zoom="1.8384776"
-     inkscape:cx="195.17746"
-     inkscape:cy="301.47863"
+     inkscape:zoom="2.4276042"
+     inkscape:cx="402.8835"
+     inkscape:cy="248.92083"
      inkscape:window-x="130"
      inkscape:window-y="48"
      inkscape:window-maximized="1"
@@ -301,173 +301,6 @@
          d="M 0,0 5,-5 -12.5,0 5,5 0,0 Z"
          id="path26789-6" />
     </marker>
-    <marker
-       inkscape:stockid="Arrow1Mend"
-       orient="auto"
-       refY="0"
-       refX="0"
-       id="marker23041-3"
-       style="overflow:visible"
-       inkscape:isstock="true">
-      <path
-         id="path23043-67"
-         d="M 0,0 5,-5 -12.5,0 5,5 0,0 Z"
-         style="fill:#008080;fill-opacity:1;fill-rule:evenodd;stroke:#008080;stroke-width:1pt;stroke-opacity:1"
-         transform="matrix(-0.4,0,0,-0.4,-4,0)"
-         inkscape:connector-curvature="0" />
-    </marker>
-    <marker
-       inkscape:stockid="Arrow1Mend"
-       orient="auto"
-       refY="0"
-       refX="0"
-       id="marker23791-5"
-       style="overflow:visible"
-       inkscape:isstock="true">
-      <path
-         id="path23793-3"
-         d="M 0,0 5,-5 -12.5,0 5,5 0,0 Z"
-         style="fill:#008080;fill-opacity:1;fill-rule:evenodd;stroke:#008080;stroke-width:1pt;stroke-opacity:1"
-         transform="matrix(-0.4,0,0,-0.4,-4,0)"
-         inkscape:connector-curvature="0" />
-    </marker>
-    <marker
-       inkscape:isstock="true"
-       style="overflow:visible"
-       id="marker23887-5"
-       refX="0"
-       refY="0"
-       orient="auto"
-       inkscape:stockid="Arrow1Mend">
-      <path
-         transform="matrix(-0.4,0,0,-0.4,-4,0)"
-         style="fill:#d45500;fill-opacity:1;fill-rule:evenodd;stroke:#d45500;stroke-width:1pt;stroke-opacity:1"
-         d="M 0,0 5,-5 -12.5,0 5,5 0,0 Z"
-         id="path23889-6"
-         inkscape:connector-curvature="0" />
-    </marker>
-    <marker
-       inkscape:collect="always"
-       inkscape:isstock="true"
-       style="overflow:visible"
-       id="Arrow1Mend"
-       refX="0"
-       refY="0"
-       orient="auto"
-       inkscape:stockid="Arrow1Mend">
-      <path
-         transform="matrix(-0.4,0,0,-0.4,-4,0)"
-         style="fill:#d45500;fill-opacity:1;fill-rule:evenodd;stroke:#d45500;stroke-width:1pt;stroke-opacity:1"
-         d="M 0,0 5,-5 -12.5,0 5,5 0,0 Z"
-         id="path20696"
-         inkscape:connector-curvature="0" />
-    </marker>
-    <marker
-       inkscape:collect="always"
-       inkscape:isstock="true"
-       style="overflow:visible"
-       id="marker22365"
-       refX="0"
-       refY="0"
-       orient="auto"
-       inkscape:stockid="Arrow1Mend">
-      <path
-         transform="matrix(-0.4,0,0,-0.4,-4,0)"
-         style="fill:#008080;fill-opacity:1;fill-rule:evenodd;stroke:#008080;stroke-width:1pt;stroke-opacity:1"
-         d="M 0,0 5,-5 -12.5,0 5,5 0,0 Z"
-         id="path22367"
-         inkscape:connector-curvature="0" />
-    </marker>
-    <marker
-       inkscape:stockid="Arrow1Mend"
-       orient="auto"
-       refY="0"
-       refX="0"
-       id="marker23791-3-2"
-       style="overflow:visible"
-       inkscape:isstock="true">
-      <path
-         id="path23793-9-9"
-         d="M 0,0 5,-5 -12.5,0 5,5 0,0 Z"
-         style="fill:#008080;fill-opacity:1;fill-rule:evenodd;stroke:#008080;stroke-width:1pt;stroke-opacity:1"
-         transform="matrix(-0.4,0,0,-0.4,-4,0)"
-         inkscape:connector-curvature="0" />
-    </marker>
-    <marker
-       inkscape:isstock="true"
-       style="overflow:visible"
-       id="marker23887-9"
-       refX="0"
-       refY="0"
-       orient="auto"
-       inkscape:stockid="Arrow1Mend">
-      <path
-         transform="matrix(-0.4,0,0,-0.4,-4,0)"
-         style="fill:#d45500;fill-opacity:1;fill-rule:evenodd;stroke:#d45500;stroke-width:1pt;stroke-opacity:1"
-         d="M 0,0 5,-5 -12.5,0 5,5 0,0 Z"
-         id="path23889-5"
-         inkscape:connector-curvature="0" />
-    </marker>
-    <marker
-       inkscape:stockid="Arrow1Mend"
-       orient="auto"
-       refY="0"
-       refX="0"
-       id="marker24993-1"
-       style="overflow:visible"
-       inkscape:isstock="true">
-      <path
-         id="path24995-2"
-         d="M 0,0 5,-5 -12.5,0 5,5 0,0 Z"
-         style="fill:#008080;fill-opacity:1;fill-rule:evenodd;stroke:#008080;stroke-width:1pt;stroke-opacity:1"
-         transform="matrix(-0.4,0,0,-0.4,-4,0)"
-         inkscape:connector-curvature="0" />
-    </marker>
-    <marker
-       inkscape:stockid="Arrow1Mend"
-       orient="auto"
-       refY="0"
-       refX="0"
-       id="marker25131-7"
-       style="overflow:visible"
-       inkscape:isstock="true">
-      <path
-         id="path25133-0"
-         d="M 0,0 5,-5 -12.5,0 5,5 0,0 Z"
-         style="fill:#d45500;fill-opacity:1;fill-rule:evenodd;stroke:#d45500;stroke-width:1pt;stroke-opacity:1"
-         transform="matrix(-0.4,0,0,-0.4,-4,0)"
-         inkscape:connector-curvature="0" />
-    </marker>
-    <marker
-       inkscape:isstock="true"
-       style="overflow:visible"
-       id="marker26645-9"
-       refX="0"
-       refY="0"
-       orient="auto"
-       inkscape:stockid="Arrow1Mend">
-      <path
-         transform="matrix(-0.4,0,0,-0.4,-4,0)"
-         style="fill:#d45500;fill-opacity:1;fill-rule:evenodd;stroke:#d45500;stroke-width:1pt;stroke-opacity:1"
-         d="M 0,0 5,-5 -12.5,0 5,5 0,0 Z"
-         id="path26647-3"
-         inkscape:connector-curvature="0" />
-    </marker>
-    <marker
-       inkscape:stockid="Arrow1Mend"
-       orient="auto"
-       refY="0"
-       refX="0"
-       id="marker26787-6"
-       style="overflow:visible"
-       inkscape:isstock="true">
-      <path
-         id="path26789-0"
-         d="M 0,0 5,-5 -12.5,0 5,5 0,0 Z"
-         style="fill:#d45500;fill-opacity:1;fill-rule:evenodd;stroke:#d45500;stroke-width:1pt;stroke-opacity:1"
-         transform="matrix(-0.4,0,0,-0.4,-4,0)"
-         inkscape:connector-curvature="0" />
-    </marker>
   </defs>
   <image
      width="800"
@@ -497,8 +330,8 @@
      style="image-rendering:optimizeQuality"
      xlink:href="file:///home/mauve/dev/pyweek27/assets/sprites/jumper.png"
      id="image12429"
-     x="28.101751"
-     y="34.64859" />
+     x="67.86245"
+     y="520.14526" />
   <image
      y="116.64835"
      x="37.260292"
@@ -510,214 +343,355 @@
      width="19.5" />
   <g
      id="layer3" />
-  <g
-     transform="translate(-703.93027,295.19633)"
-     id="layer1"
-     inkscape:label="Layer 1">
-    <g
-       transform="translate(200.60331,-166.63345)"
-       id="g24053">
-      <path
-         style="fill:none;fill-rule:evenodd;stroke:#d45500;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
-         d="m 92.843755,240.23047 0,-221.031428"
-         id="path20681"
-         inkscape:connector-curvature="0" />
-      <path
-         sodipodi:nodetypes="cc"
-         style="fill:none;fill-rule:evenodd;stroke:#008080;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker22365)"
-         d="M 91.421812,240.23047 C 438.16319,409.14153 486.2319,688.31867 521.65222,822.61399"
-         id="path22363"
-         inkscape:connector-curvature="0" />
-      <path
-         inkscape:connector-curvature="0"
-         id="path23165"
-         d="m 92.843761,239.05885 0,588.78901"
-         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#008080;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker23791-3-2);color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
-      <path
-         sodipodi:nodetypes="cc"
-         style="fill:none;fill-rule:evenodd;stroke:#d45500;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker23887-9)"
-         d="M 93.59485,240.23047 C -104.98122,-83.563371 -308.82503,140.22403 -447.13957,600"
-         id="path23885"
-         inkscape:connector-curvature="0" />
-      <path
-         inkscape:connector-curvature="0"
-         id="path24991"
-         d="M 95.268722,240.23047 C -251.47266,409.14153 -299.54137,688.31867 -334.96169,822.61399"
-         style="fill:none;fill-rule:evenodd;stroke:#008080;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker24993-1)"
-         sodipodi:nodetypes="cc" />
-      <path
-         inkscape:connector-curvature="0"
-         id="path26643"
-         d="M 92.756297,240.73845 C 289.46963,-83.055378 491.40128,140.73201 628.41836,600.50798"
-         style="fill:none;fill-rule:evenodd;stroke:#d45500;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker26787-6)"
-         sodipodi:nodetypes="cc" />
-    </g>
-    <circle
-       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ffcc00;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:7.99999998, 7.99999998;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
-       id="circle26271"
-       cx="317.36328"
-       cy="-382.96555"
-       r="63.5" />
-  </g>
-  <path
-     style="fill:#4f4f2b;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="m -1.2745032,231.8317 200.5052732,184.32215 63.84615,27.6923 59.23077,6.15385 43.84616,-2.30769 40.76923,-8.46154 43.84615,-22.30769 33.84615,-10.76923 6.92308,34.61538 L 480,459.23077 l -20,6.92308 -20.76923,26.15384 -6.92308,40 -27.69231,-23.84615 c 0,0 -8.5162,-8.79618 -16.97774,-2.64233 -8.46154,6.15384 -19.60406,11.25849 -19.60406,11.25849 L 361.53846,560.76923 360,601.53846 0,600 Z"
-     id="path4942"
-     inkscape:connector-curvature="0"
-     sodipodi:nodetypes="ccccccccccccccsccccc" />
   <image
-     y="219.61519"
-     x="718.57001"
-     id="image20510"
-     style="image-rendering:optimizeQuality"
+     width="23.606558"
+     height="18.688524"
      preserveAspectRatio="none"
-     height="14.5"
-     width="19.5"
-     xlink:href="file:///home/mauve/dev/pyweek27/source/fly.png"
-     sodipodi:absref="/home/mauve/dev/pyweek27/source/fly.png" />
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/source/butterfly.png"
+     id="image16908"
+     x="721.02118"
+     y="229.10104" />
   <rect
-     style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.5;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#657182;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
-     id="rect4959"
-     width="440.35815"
-     height="87.557869"
-     x="359.64185"
-     y="512.44214" />
+     style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#657182;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+     id="rect6188"
+     width="622.8363"
+     height="65.084747"
+     x="-0.41192877"
+     y="534.91528" />
+  <path
+     style="fill:#483737;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 623.66797 601.23633 L 620.36523 601.23633 L 623.66016 602.4707 L 623.66797 601.23633 z "
+     id="path9724" />
+  <path
+     style="fill:#3b3426;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1"
+     d="M 467.91016 320.17773 L 467.53906 321.94727 L 470.83398 352.43164 L 525.62109 367.67188 C 525.62109 367.67188 530.15289 391.97552 531.38867 394.03516 C 532.62446 396.09481 544.98191 396.5073 548.27734 399.80273 C 551.57277 403.09816 582.87891 391.56445 582.87891 391.56445 L 612.94922 426.16602 L 624.48438 464.88672 L 623.66797 601.23633 L 802.02539 601.23633 L 802.02539 337.80859 L 801.20117 343.36914 L 716.75586 344.60352 L 658.67383 315.35742 L 535.91992 285.28711 L 481.95703 298.05664 L 468.77539 319.88867 L 467.91016 320.17773 z "
+     id="path9722" />
+  <path
+     style="fill:#4a4130;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1"
+     d="M 467.91016 320.17773 L 468.77539 319.88867 L 481.95703 298.05664 L 535.91992 285.28711 L 658.67383 315.35742 L 716.75586 344.60352 L 801.20117 343.36914 L 802.02539 337.80859 L 802.02539 335.54102 L 717.16797 335.12891 L 665.67773 305.4707 L 533.03516 275.8125 L 474.54102 288.58203 L 467.91016 320.17773 z "
+     id="path6322" />
   <image
-     y="258.77802"
-     x="60.416771"
-     id="image4963"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/log1.png"
+     y="91.737427"
+     x="-560.63293"
+     id="image9587"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/log1.png"
      style="image-rendering:optimizeQuality"
      preserveAspectRatio="none"
-     height="14.5"
-     width="19.5"
-     xlink:href="file:///home/mauve/dev/pyweek27/source/fly.png"
-     sodipodi:absref="/home/mauve/dev/pyweek27/source/fly.png" />
+     height="373.56665"
+     width="162.7419"
+     transform="matrix(-0.84363322,-0.53691991,-0.53691991,0.84363322,0,0)" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 89.388543,601.64772 237.6829,462.41579 l 0.41193,-37.48552 12.76979,-6.17893 5.767,23.47994 21.83223,-16.06522 41.6048,-39.13323 65.08475,-33.36623 4.53122,9.06243 -28.42309,39.54516 2.8835,35.8378 -58.08195,45.7241 -35.01395,44.90023 31.30659,32.54238 -1.64772,8.6505 -39.54516,31.30659 z"
+     id="path9590"
+     inkscape:connector-curvature="0" />
   <image
-     y="395.30402"
-     x="223.59526"
-     id="image4965"
-     style="image-rendering:optimizeQuality"
-     preserveAspectRatio="none"
-     height="14.5"
-     width="19.5"
-     xlink:href="file:///home/mauve/dev/pyweek27/source/fly.png"
-     sodipodi:absref="/home/mauve/dev/pyweek27/source/fly.png" />
-  <image
-     sodipodi:absref="/home/mauve/dev/pyweek27/source/fly.png"
-     xlink:href="file:///home/mauve/dev/pyweek27/source/fly.png"
-     width="19.5"
-     height="14.5"
-     preserveAspectRatio="none"
-     style="image-rendering:optimizeQuality"
-     id="image4961"
-     x="457.48444"
-     y="374.09082" />
-  <image
-     width="30"
+     width="18.5"
      height="18"
      preserveAspectRatio="none"
      style="image-rendering:optimizeQuality"
-     xlink:href="file:///home/mauve/dev/pyweek27/assets/sprites/fish.png"
-     id="image5216"
-     x="502.27582"
-     y="548.02966"
-     sodipodi:absref="/home/mauve/dev/pyweek27/assets/sprites/fish.png" />
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     id="image9673"
+     x="335.94629"
+     y="432.81934"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png" />
   <image
-     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/vine.png"
-     y="409.1665"
-     x="473.10974"
-     id="image5312"
-     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/vine.png"
-     style="image-rendering:optimizeQuality"
-     preserveAspectRatio="none"
-     height="101"
-     width="28.5" />
-  <image
-     inkscape:transform-center-y="6.1004891"
-     inkscape:transform-center-x="-10.799554"
-     transform="matrix(-0.80323277,-0.59566527,-0.59566527,0.80323277,0,0)"
-     width="58"
-     height="23.5"
+     width="18.5"
+     height="18"
      preserveAspectRatio="none"
      style="image-rendering:optimizeQuality"
-     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
-     id="image5377"
-     x="-226.974"
-     y="171.90222"
-     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png" />
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     id="image9675"
+     x="314.11407"
+     y="448.06073"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png" />
   <image
-     inkscape:transform-center-y="3.8023934"
-     inkscape:transform-center-x="-14.90965"
-     transform="matrix(-0.92916044,-0.36967672,-0.09161037,0.99579493,0,0)"
-     width="74.655716"
-     height="31.629486"
+     width="18.5"
+     height="18"
      preserveAspectRatio="none"
      style="image-rendering:optimizeQuality"
-     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
-     id="image5379"
-     x="-98.925346"
-     y="203.09425"
-     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png" />
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     id="image9677"
+     x="323.17651"
+     y="439.41022"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png" />
   <image
-     inkscape:transform-center-y="10.417626"
-     inkscape:transform-center-x="-6.7319459"
-     transform="matrix(-0.43479282,-0.90053051,-0.90053051,0.43479282,0,0)"
-     width="58"
-     height="23.5"
+     width="18.5"
+     height="18"
      preserveAspectRatio="none"
      style="image-rendering:optimizeQuality"
-     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
-     id="image5381"
-     x="-600.16589"
-     y="-113.67695"
-     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png" />
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     id="image9679"
+     x="469.41122"
+     y="332.72067"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png" />
   <image
-     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
-     y="363.93292"
-     x="-168.25989"
-     id="image5374"
-     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
-     style="image-rendering:optimizeQuality"
-     preserveAspectRatio="none"
-     height="20.034739"
-     width="49.447441"
-     transform="matrix(-0.99894226,0.04598211,0.04598211,0.99894226,0,0)"
-     inkscape:transform-center-x="-10.422232"
-     inkscape:transform-center-y="-1.7879074" />
-  <image
-     inkscape:transform-center-y="1.6994196"
-     inkscape:transform-center-x="-10.437033"
-     transform="matrix(-0.95957608,-0.28144936,-0.28144936,0.95957608,0,0)"
-     width="49.447441"
-     height="20.034739"
+     width="18.5"
+     height="18"
      preserveAspectRatio="none"
      style="image-rendering:optimizeQuality"
-     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
-     id="image5383"
-     x="-312.81277"
-     y="316.32993"
-     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png" />
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     id="image9681"
+     x="482.59296"
+     y="340.5473"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png" />
   <image
-     inkscape:transform-center-y="1.9749762"
-     inkscape:transform-center-x="-13.788713"
-     transform="matrix(-0.96478812,-0.2630283,-0.2630283,0.96478812,0,0)"
-     width="65.13562"
-     height="26.391155"
+     width="18.5"
+     height="18"
      preserveAspectRatio="none"
      style="image-rendering:optimizeQuality"
-     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
-     id="image5385"
-     x="-210.20367"
-     y="255.30693"
-     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png" />
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     id="image9683"
+     x="492.06729"
+     y="350.02167"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png" />
   <image
-     sodipodi:absref="/home/mauve/dev/pyweek27/source/fly.png"
+     width="18.5"
+     height="18"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     id="image9685"
+     x="507.30869"
+     y="345.49045"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png" />
+  <image
+     width="18.5"
+     height="18"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     id="image9687"
+     x="469.82315"
+     y="343.43082"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png" />
+  <image
+     width="18.5"
+     height="18"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     id="image9689"
+     x="543.14648"
+     y="387.50717"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png" />
+  <image
+     width="18.5"
+     height="18"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     id="image9691"
+     x="560.44751"
+     y="387.50717"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png" />
+  <image
+     width="18.5"
+     height="18"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     id="image9693"
+     x="573.62921"
+     y="381.32825"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png" />
+  <image
+     width="18.5"
+     height="18"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     id="image9695"
+     x="550.97314"
+     y="391.21454"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png" />
+  <image
+     width="18.5"
+     height="18"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     id="image9697"
+     x="499.48203"
+     y="282.46536"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     y="286.1727"
+     x="566.6264"
+     id="image9717"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="18"
+     width="18.5" />
+  <image
+     width="18.5"
+     height="18"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     id="image9699"
+     x="583.92743"
+     y="308.41687"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png" />
+  <image
+     width="18.5"
+     height="18"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     id="image9701"
+     x="555.09241"
+     y="284.93692"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png" />
+  <image
+     width="18.5"
+     height="18"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     id="image9703"
+     x="576.5127"
+     y="305.12143"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png" />
+  <image
+     width="18.5"
+     height="18"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     id="image9705"
+     x="572.80536"
+     y="291.93973"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png" />
+  <image
+     width="18.5"
+     height="18"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     id="image9707"
+     x="508.95639"
+     y="283.28922"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png" />
+  <image
+     width="18.5"
+     height="18"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     id="image9709"
+     x="516.37109"
+     y="279.58185"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png" />
+  <image
+     width="18.5"
+     height="18"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     id="image9711"
+     x="521.7262"
+     y="285.76077"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png" />
+  <image
+     width="18.5"
+     height="18"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     id="image9713"
+     x="521.7262"
+     y="297.70673"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png" />
+  <image
+     width="18.5"
+     height="18"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     id="image9715"
+     x="511.01602"
+     y="296.88284"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     y="298.53058"
+     x="562.91907"
+     id="image9670"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/moss1.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="18"
+     width="18.5" />
+  <image
+     width="77.902275"
+     height="46.741364"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/plant1.png"
+     id="image9788"
+     x="618.89917"
+     y="260.06207"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/plant1.png" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/plant1.png"
+     y="270.77222"
+     x="608.66962"
+     id="image9785"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/plant1.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="32.323856"
+     width="53.873096" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/rocks1.png"
+     y="309.18387"
+     x="725.06543"
+     id="image9881"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/rocks1.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="28"
+     width="60" />
+  <image
+     y="103.87856"
+     x="537.75372"
+     id="image9983"
      xlink:href="file:///home/mauve/dev/pyweek27/source/fly.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="14.5"
+     width="19.5" />
+  <image
      width="19.5"
      height="14.5"
      preserveAspectRatio="none"
      style="image-rendering:optimizeQuality"
-     id="image5387"
-     x="516.2287"
-     y="56.980629" />
+     xlink:href="file:///home/mauve/dev/pyweek27/source/fly.png"
+     id="image9985"
+     x="227.57137"
+     y="333.32288" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/sprites/goldfish.png"
+     y="560.50305"
+     x="414.30365"
+     id="image10046"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/sprites/goldfish.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="20.5"
+     width="31.5" />
+  <image
+     width="19.5"
+     height="14.5"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/source/fly.png"
+     id="image10049"
+     x="574.00348"
+     y="451.13452" />
 </svg>
