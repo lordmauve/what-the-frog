@@ -75,6 +75,10 @@ class Level:
         self.pc = None
         self.objs = []
         self.static_shapes = []
+
+        self.background = pyglet.sprite.Sprite(
+            pyglet.resource.image('backgrounds/default.jpg')
+        )
         if name:
             self.load(name)
 
@@ -128,6 +132,11 @@ class Level:
             self.pc = Frog(6, 7)
         controls.reset()
         controls.pc = self.pc
+        try:
+            img = pyglet.resource.image(f'backgrounds/{self.name}.jpg')
+        except pyglet.resource.ResourceNotFoundException:
+            img = pyglet.resource.image('backgrounds/default.jpg')
+        self.background.image = img
 
     def reload(self):
         self.delete()
@@ -159,10 +168,6 @@ fps_display = pyglet.clock.ClockDisplay()
 
 offscreen = OffscreenBuffer(WIDTH, HEIGHT, mgl)
 
-background = pyglet.sprite.Sprite(
-    pyglet.resource.image('backgrounds/level1.png')
-)
-
 
 water_batch = WaterBatch(mgl)
 
@@ -189,7 +194,7 @@ def on_draw(dt):
         fbuf.clear(0.13, 0.1, 0.1)
         gl.glLoadIdentity()
         gl.glScalef(PIXEL_SCALE, PIXEL_SCALE, 1)
-        background.draw()
+        level.background.draw()
         RockPoly.batch.draw()
         actor_sprites.draw()
 
