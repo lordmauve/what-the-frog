@@ -209,6 +209,7 @@ def load_entities(doc, level):
             continue
 
         rot = 0
+        scale = 1
         flip = False
 
         cx = float(r.attrib['x']) + float(r.attrib['width']) * 0.5
@@ -228,6 +229,7 @@ def load_entities(doc, level):
             flip = np.cross(a[..., 1], a[..., 2])[2] < 0
             x1, x2, _ = a[..., 1]
             rot = math.degrees(math.atan2(x2, x1))
+            scale = math.hypot(x1, x2)
 
         w = float(r.attrib['width']) * SVG_SCALE
         h = float(r.attrib['height']) * SVG_SCALE
@@ -246,6 +248,8 @@ def load_entities(doc, level):
             s = pyglet.sprite.Sprite(img, batch=level.fg_batch)
             s.position = phys_to_screen(cx, cy)
             s.rotation = rot
+            scale = float(r.attrib['width']) * scale / img.width * 2
+            s.scale = scale
             if flip:
                 s.scale_y = -1
             level.objs.append(s)
