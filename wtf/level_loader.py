@@ -1,11 +1,13 @@
 import numpy as np
+import math
 import re
 import pyglet.resource
 from xml.etree.ElementTree import parse
 from pymunk import Vec2d
 
+from .sprites import load_centered
 from .water import Water
-from .geom import SPACE_SCALE
+from .geom import SPACE_SCALE, phys_to_screen
 from .poly import RockPoly
 from .actors import Butterfly, Fly, Frog, Fish, Goldfish
 from .scenery import Platform
@@ -107,8 +109,10 @@ class NoSuchLevel(Exception):
     """Raised when the level name does not exist."""
 
 
+SVG_SCALE = 2 * SPACE_SCALE
+
+
 def load_level(level):
-    scale = 2 * SPACE_SCALE
     try:
         f = pyglet.resource.file(f'levels/{level.name}.svg')
     except pyglet.resource.ResourceNotFoundException:
@@ -137,42 +141,105 @@ def load_level(level):
 
             level.objs.append(
                 RockPoly(
-                    verts.reshape(-1) * scale,
+                    verts.reshape(-1) * SVG_SCALE,
                     draw=draw,
                     color=color,
                 )
             )
 
     for r in doc.findall('.//{http://www.w3.org/2000/svg}rect'):
-        x1 = float(r.attrib['x']) * scale
-        y = (height - float(r.attrib['y'])) * scale
-        x2 = x1 + float(r.attrib['width']) * scale
-        y_bot = y - float(r.attrib['height']) * scale
+        x1 = float(r.attrib['x']) * SVG_SCALE
+        y = (height - float(r.attrib['y'])) * SVG_SCALE
+        x2 = x1 + float(r.attrib['width']) * SVG_SCALE
+        y_bot = y - float(r.attrib['height']) * SVG_SCALE
         assert y > y_bot
         Water(y, x1, x2, y_bot)
 
+    load_entities(doc, level)
+
+
+ACTOR_TYPES = {
+    'butterfly': Butterfly,
+    'fly': Fly,
+    'goldfish': Goldfish,
+    'fish': Fish,
+
+}
+
+
+def xform_matrix(a, b, c, d, e, f):
+    return np.array([
+        [a, c, e],
+        [b, d, f],
+        [0, 0, 1],
+    ])
+
+
+def load_entities(doc, level):
+    height = float(doc.getroot().attrib['height'])
+
+    imgs = {}
+
     for r in doc.findall('.//{http://www.w3.org/2000/svg}image'):
-        w = float(r.attrib['width']) * scale
-        h = float(r.attrib['height']) * scale
-
-        halfw = w / 2
-        halfh = h / 2
-
-        x = float(r.attrib['x']) * scale + halfw
-        y = (height - float(r.attrib['y'])) * scale - halfh
-
         href = r.attrib['{http://www.w3.org/1999/xlink}href']
-        if 'butterfly.png' in href:
-            Butterfly(x, y)
-        elif 'fly.png' in href:
-            Fly(x, y)
-        elif 'goldfish.png' in href:
-            Goldfish(x, y)
-        elif 'fish.png' in href:
-            Fish(x, y)
+
+        mo = re.search(r'/([^/]+)/([^/]+)\.(png|jpg)$', href)
+        if not mo:
+            print(f"No match for {href}")
+            continue
+
+        group, name, ext = mo.groups()
+        if group == 'backgrounds':
+            continue
+
+        rot = 0
+        flip = False
+
+        cx = float(r.attrib['x']) + float(r.attrib['width']) * 0.5
+        cy = float(r.attrib['y']) + float(r.attrib['height']) * 0.5
+        try:
+            transform = r.attrib['transform']
+        except KeyError:
+            pass
+        else:
+            mat = eval(transform, {'matrix': xform_matrix})
+            cx, cy, _ = mat @ np.array([cx, cy, 1]).T
+
+            xp = mat @ np.array([1, 0, 1]).T
+            yp = mat @ np.array([0, 1, 1]).T
+            flip = np.cross(xp, yp)[2] < 0
+            x1, x2, _ = xp
+            rot = math.degrees(math.atan2(x2, x1))
+
+        w = float(r.attrib['width']) * SVG_SCALE
+        h = float(r.attrib['height']) * SVG_SCALE
+
+        # Convert to screen coords
+        cx = cx * SVG_SCALE
+        cy = (height - cy) * SVG_SCALE
+
+        if group == 'scenery':
+            k = f'scenery/{name}.{ext}'
+            try:
+                img = imgs[k]
+            except KeyError:
+                img = imgs[k] = load_centered(name, group)
+
+            s = pyglet.sprite.Sprite(img, batch=level.fg_batch)
+            s.position = phys_to_screen(cx, cy)
+            s.rotation = rot
+            if flip:
+                s.scale_y = -1
+            level.objs.append(s)
+            continue
+
+        cls = ACTOR_TYPES.get(name)
+        if cls:
+            cls(cx, cy)
+            continue
         elif 'jumper.png' in href:
-            level.pc = Frog(x, y)
+            level.pc = Frog(cx, cy)
         elif 'platform.png' in href:
             level.objs.append(
-                Platform(x - halfw, y - halfh)
+                Platform(cx - halfw, cy - halfh)
             )

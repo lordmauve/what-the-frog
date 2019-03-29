@@ -79,6 +79,7 @@ class Level:
         self.background = pyglet.sprite.Sprite(
             pyglet.resource.image('backgrounds/default.jpg')
         )
+        self.fg_batch = pyglet.graphics.Batch()
         if name:
             self.load(name)
 
@@ -127,13 +128,16 @@ class Level:
         self.pc = None
         self.objs = []
         self.static_shapes = create_walls(space, WIDTH, HEIGHT)
+        self.set_background(self.name)
         load_level(self)
         if self.pc is None:
             self.pc = Frog(6, 7)
         controls.reset()
         controls.pc = self.pc
+
+    def set_background(self, name):
         try:
-            img = pyglet.resource.image(f'backgrounds/{self.name}.jpg')
+            img = pyglet.resource.image(f'backgrounds/{name}.jpg')
         except pyglet.resource.ResourceNotFoundException:
             img = pyglet.resource.image('backgrounds/default.jpg')
         self.background.image = img
@@ -159,6 +163,7 @@ class Level:
             self.pc.delete()
         self.pc = None
         space.remove(*self.static_shapes)
+        self.fg_batch = pyglet.graphics.Batch()
         assert not space.bodies, f"Space contains bodies: {space.bodies}"
         assert not space.shapes, f"Space contains shapes: {space.shapes}"
 
@@ -197,6 +202,7 @@ def on_draw(dt):
         level.background.draw()
         RockPoly.batch.draw()
         actor_sprites.draw()
+        level.fg_batch.draw()
 
     mgl.screen.clear()
     offscreen.draw()
