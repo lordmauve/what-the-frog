@@ -175,6 +175,22 @@ def xform_matrix(a, b, c, d, e, f):
     ])
 
 
+def xform_scale(x, y=None):
+    if y is None:
+        y = x
+    return np.array([
+        [x, 0, 0],
+        [0, y, 0],
+        [0, 0, 1],
+    ])
+
+
+TRANSFORMS = {
+    'matrix': xform_matrix,
+    'scale': xform_scale,
+}
+
+
 def load_entities(doc, level):
     height = float(doc.getroot().attrib['height'])
 
@@ -202,13 +218,15 @@ def load_entities(doc, level):
         except KeyError:
             pass
         else:
-            mat = eval(transform, {'matrix': xform_matrix})
-            cx, cy, _ = mat @ np.array([cx, cy, 1]).T
-
-            xp = mat @ np.array([1, 0, 1]).T
-            yp = mat @ np.array([0, 1, 1]).T
-            flip = np.cross(xp, yp)[2] < 0
-            x1, x2, _ = xp
+            mat = eval(transform, TRANSFORMS)
+            a = mat @ np.array([
+                [cx, cy, 1],
+                [1, 0, 0],
+                [0, 1, 0],
+            ]).T
+            cx, cy = a[:2, 0]
+            flip = np.cross(a[..., 1], a[..., 2])[2] < 0
+            x1, x2, _ = a[..., 1]
             rot = math.degrees(math.atan2(x2, x1))
 
         w = float(r.attrib['width']) * SVG_SCALE
@@ -241,5 +259,5 @@ def load_entities(doc, level):
             level.pc = Frog(cx, cy)
         elif 'platform.png' in href:
             level.objs.append(
-                Platform(cx - halfw, cy - halfh)
+                Platform(cx - w // 2, cy - h // 2)
             )
