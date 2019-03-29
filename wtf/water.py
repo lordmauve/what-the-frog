@@ -1,3 +1,5 @@
+from math import copysign
+
 import numpy as np
 import moderngl
 
@@ -193,9 +195,11 @@ class Water:
         )))
         if frac_immersed < 1:
             f = 0.6 ** dt
+            vy = body.velocity.y
+            vy = copysign(min(100, abs(vy)), vy)
             inst.velocities[a:b] = (
                 inst.velocities[a:b] * f +
-                body.velocity.y * abs(body.velocity.y) * 0.1 * (1.0 - f)
+                vy * abs(vy) * 40 * (1.0 - f) / (b - a) * dt
             )
 
         buoyancy = BUOYANCY * bb.area()

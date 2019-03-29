@@ -50,6 +50,7 @@ def on_collect(arbiter, space, data):
     frog.obj.lick(fly.obj.sprite.position)
     fly.obj.collect(frog, controls)
     space.remove(fly)
+    level.actors.remove(fly.obj)
     if not Fly.insts:
         pyglet.clock.schedule_once(level.win, 0.8)
     return False
@@ -74,6 +75,7 @@ class Level:
         self.state = LevelState.PLAYING
         self.pc = None
         self.objs = []
+        self.actors = []
         self.static_shapes = []
 
         self.background = pyglet.sprite.Sprite(
@@ -127,6 +129,7 @@ class Level:
         self.state = LevelState.PLAYING
         self.pc = None
         self.objs = []
+        self.actors = []
         self.static_shapes = create_walls(space, WIDTH, HEIGHT)
         self.set_background(self.name)
         load_level(self)
@@ -155,12 +158,10 @@ class Level:
                 o.delete()
             except KeyError:
                 raise KeyError(f"Couldn't delete {o}")
-        for f in Fly.insts[:]:
-            f.delete()
+        for a in self.actors:
+            a.delete()
         for w in Water.insts[:]:
             w.delete()
-        if self.pc:
-            self.pc.delete()
         self.pc = None
         space.remove(*self.static_shapes)
         self.fg_batch = pyglet.graphics.Batch()
@@ -183,10 +184,8 @@ pymunk_drawoptions = pymunk.pyglet_util.DrawOptions()
 
 def on_draw(dt):
     # Update graphical things
-    level.pc.update(dt)
-
-    for f in Fly.insts:
-        f.update(dt)
+    for a in level.actors:
+        a.update(dt)
 
     for w in Water.insts:
         w.update(dt)

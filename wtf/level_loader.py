@@ -10,7 +10,7 @@ from .water import Water
 from .geom import SPACE_SCALE, phys_to_screen
 from .poly import RockPoly
 from .actors import Butterfly, Fly, Frog, Fish, Goldfish
-from .scenery import Platform
+from .scenery import Platform, Lilypad
 
 
 COMMA_WSP = re.compile(r'(?:\s+,?\s*|,\s*)')
@@ -163,7 +163,7 @@ ACTOR_TYPES = {
     'fly': Fly,
     'goldfish': Goldfish,
     'fish': Fish,
-
+    'lilypad': Lilypad,
 }
 
 
@@ -257,10 +257,11 @@ def load_entities(doc, level):
 
         cls = ACTOR_TYPES.get(name)
         if cls:
-            cls(cx, cy)
+            level.actors.append(cls(cx, cy))
             continue
         elif 'jumper.png' in href:
-            level.pc = Frog(cx, cy)
+            frog = level.pc = Frog(cx, cy)
+            level.actors.append(frog)
         elif 'platform.png' in href:
             level.objs.append(
                 Platform(cx - w // 2, cy - h // 2)
