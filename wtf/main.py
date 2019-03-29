@@ -268,7 +268,7 @@ class JumpController:
             self.available[direction] = False
             self.hud.set_available(direction, False)
             if not any(self.available.values()):
-                pyglet.clock.schedule_once(self.level.fail, 3)
+                pyglet.clock.schedule_once(self.level.fail, 1.3)
         else:
             self.hud.warn_unavailable(direction)
 
