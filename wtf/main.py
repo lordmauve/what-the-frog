@@ -51,7 +51,7 @@ def on_collect(arbiter, space, data):
     fly.obj.collect(frog, controls)
     space.remove(fly)
     if not Fly.insts:
-        level.win()
+        pyglet.clock.schedule_once(level.win, 0.8)
     return False
 
 
