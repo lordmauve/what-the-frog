@@ -33,6 +33,7 @@ WIDTH = 1600   # Width in hidpi pixels
 HEIGHT = 1200  # Height in hidpi pixels
 
 
+easy_mode = False
 slowmo = False
 
 window = pyglet.window.Window(
@@ -139,7 +140,7 @@ class Level:
         self.state = LevelState.PERFECT
         sounds.play('orchhit3')
         hud.show_card('3star')
-        progress.set_stars(self.name, slowmo, 3)
+        progress.set_stars(self.name, easy_mode, 3)
 
     def fail(self, *_):
         if self.state is not LevelState.PLAYING:
@@ -149,12 +150,12 @@ class Level:
         if flies_remaining == 1:
             hud.show_card('2star')
             sounds.play('orchhit2')
-            progress.set_stars(self.name, slowmo, 2)
+            progress.set_stars(self.name, easy_mode, 2)
             self.state = LevelState.WON
         elif flies_remaining == 2:
             hud.show_card('1star')
             sounds.play('orchhit1')
-            progress.set_stars(self.name, slowmo, 1)
+            progress.set_stars(self.name, easy_mode, 1)
             self.state = LevelState.WON
         else:
             self.state = LevelState.FAILED
@@ -332,7 +333,8 @@ keyhandler = None
 
 
 def set_keyhandler(slowmo=False):
-    global keyhandler
+    global keyhandler, easy_mode
+    easy_mode = slowmo
     if keyhandler:
         window.pop_handlers()
         window.pop_handlers()
