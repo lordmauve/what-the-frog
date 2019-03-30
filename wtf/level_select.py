@@ -4,6 +4,7 @@ from pymunk import Vec2d
 import pyglet.graphics
 import pyglet.sprite
 import pyglet.clock
+from pyglet.event import EVENT_HANDLED
 
 from .directions import Direction
 from . import ASSETS_PATH, SAVE_PATH
@@ -279,13 +280,10 @@ class LevelSelectScreen:
             s.x = s.real_x - self.offset
 
     def start(self):
-        try:
-            self.window.pop_handlers()
-        except Exception:
-            pass
+        from .main import hud, clear_handlers
+        clear_handlers()
         self.window.push_handlers(self)
         self.window.push_handlers(KeyInputHandler(self.jump, self.window))
-        from .main import hud
         hud.clear_card()
         hud.card = True  # hide the arrows
         pyglet.clock.schedule(self.update)
@@ -296,8 +294,9 @@ class LevelSelectScreen:
                 self.start_selected()
         elif symbol == pyglet.window.key.ESCAPE:
             from .main import TitleScreen
-            self.window.pop_handlers()
+            self.delete()
             TitleScreen().start()
+        return EVENT_HANDLED
 
     def delete(self):
         for s in self.sprites:
