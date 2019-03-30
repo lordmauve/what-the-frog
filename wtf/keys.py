@@ -115,6 +115,7 @@ class RestartKeyHandler:
                 self.level.reload()
                 return EVENT_HANDLED
             elif self.level.state is LevelState.END:
+                main.TitleScreen().start()
                 # TODO: return to the title screen
                 return EVENT_HANDLED
             elif self.level.won:
@@ -123,7 +124,7 @@ class RestartKeyHandler:
 
         if symbol == key.ESCAPE:
             if self.last_key == key.ESCAPE:
-                main.exit()
+                main.TitleScreen().start()
                 return EVENT_HANDLED
             self.level.reload()
             self.last_key = symbol

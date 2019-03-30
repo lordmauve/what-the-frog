@@ -46,7 +46,7 @@ class LevelList:
         idx = self.levels.index(current)
         try:
             return self.levels[idx + 1]
-        except KeyError:
+        except IndexError:
             raise NoSuchLevel("You have won") from None
 
 

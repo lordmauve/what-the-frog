@@ -6,6 +6,7 @@ from pymunk.vec2d import Vec2d
 import moderngl
 from pyrr import Matrix44
 import pymunk.pyglet_util
+from pyglet.event import EVENT_HANDLED
 
 from . import PIXEL_SCALE
 import wtf.keys
@@ -329,16 +330,11 @@ class JumpController:
 hud = HUD(WIDTH, HEIGHT)
 controls = JumpController(level, hud)
 
-keyhandler = None
-
 
 def set_keyhandler(slowmo=False):
-    global keyhandler, easy_mode
+    global easy_mode
     easy_mode = slowmo
-    if keyhandler:
-        window.pop_handlers()
-        window.pop_handlers()
-
+    clear_handlers()
     cls = (
         wtf.keys.SlowMoKeyInputHandler if slowmo else wtf.keys.KeyInputHandler
     )
@@ -367,12 +363,19 @@ def update_physics(dt):
         space.step(1 / 180)
 
 
-class TitleScreen:
-    def start(self):
+def clear_handlers():
+    """Pop all handlers."""
+    while True:
         try:
             window.pop_handlers()
         except Exception:
-            pass
+            break
+
+
+class TitleScreen:
+    def start(self):
+        clear_handlers()
+        level.delete()
         hud.show_card('title')
         window.push_handlers(self)
 
@@ -390,12 +393,15 @@ class GameModeScreen:
     EASY = pyglet.window.key._1
     NORMAL = pyglet.window.key._2
 
+    def __init__(self):
+        self.shown_controls = False
+
     def start(self):
         try:
             window.pop_handlers()
         except Exception:
             pass
-        hud.show_card('game-mode')
+        hud.show_card('controls')
         window.push_handlers(self)
 
     def on_key_press(self, symbol, modifiers):
@@ -405,9 +411,14 @@ class GameModeScreen:
 
         if symbol == pyglet.window.key.ESCAPE:
             TitleScreen().start()
-        elif symbol in (self.EASY, self.NORMAL):
-            slowmo = symbol == self.EASY
-            LevelSelectScreen(window, slowmo).start()
+        elif self.shown_controls:
+            if symbol in (self.EASY, self.NORMAL):
+                slowmo = symbol == self.EASY
+                LevelSelectScreen(window, slowmo).start()
+        else:
+            self.shown_controls = True
+            hud.show_card('game-mode')
+        return EVENT_HANDLED
 
 
 def run(level_name=None, slowmo=False):
