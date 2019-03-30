@@ -3,10 +3,15 @@
 We use Pygame for audio because Pyglet's audio has proven to be unstable
 in many previous PyWeeks.
 """
+import os
 import random
-import pygame.mixer
-import pyglet.resource
 from functools import lru_cache
+import pyglet.resource
+
+# Don't show Pygame's annoying message because while I might use PyGame,
+# I don't appreciate libraries I use communicating with my users.
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
+import pygame.mixer
 
 pygame.mixer.pre_init(44000, 16, 2)
 pygame.mixer.init()
