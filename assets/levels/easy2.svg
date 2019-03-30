@@ -16,7 +16,7 @@
    id="svg4881"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="tutorial2.svg">
+   sodipodi:docname="easy2.svg">
   <defs
      id="defs4883">
     <marker
@@ -255,9 +255,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.0341228"
-     inkscape:cx="859.48227"
-     inkscape:cy="347.3065"
+     inkscape:zoom="2.2565463"
+     inkscape:cx="450.98041"
+     inkscape:cy="307.92568"
      inkscape:document-units="px"
      inkscape:current-layer="layer3"
      showgrid="false"
@@ -274,7 +274,7 @@
      y="0"
      x="0"
      id="image10603"
-     xlink:href="file:///home/mauve/dev/pyweek27/assets/backgrounds/level1.png"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/backgrounds/default.jpg"
      style="image-rendering:optimizeQuality"
      preserveAspectRatio="none"
      height="600"
@@ -349,9 +349,71 @@
        y="532.80872"
        x="159.54553"
        height="70.107727"
-       width="638.19324"
+       width="643.06793"
        id="rect30870"
        style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.5;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#657182;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+    <image
+       width="70"
+       height="92"
+       preserveAspectRatio="none"
+       style="image-rendering:optimizeQuality"
+       xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/weed1.png"
+       id="image20392"
+       x="728.55627"
+       y="526.96753"
+       sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/weed1.png" />
+    <image
+       width="70"
+       height="92"
+       preserveAspectRatio="none"
+       style="image-rendering:optimizeQuality"
+       xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/weed1.png"
+       id="image20394"
+       x="167.07875"
+       y="532.72858"
+       sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/weed1.png" />
+    <image
+       width="70"
+       height="92"
+       preserveAspectRatio="none"
+       style="image-rendering:optimizeQuality"
+       xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/weed1.png"
+       id="image20396"
+       x="204.30379"
+       y="545.58008"
+       sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/weed1.png" />
+    <image
+       width="70"
+       height="92"
+       preserveAspectRatio="none"
+       style="image-rendering:optimizeQuality"
+       xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/weed1.png"
+       id="image20398"
+       x="447.15277"
+       y="546.02319"
+       sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/weed1.png" />
+    <image
+       transform="scale(-1,1)"
+       width="70"
+       height="92"
+       preserveAspectRatio="none"
+       style="image-rendering:optimizeQuality"
+       xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/weed1.png"
+       id="image20402"
+       x="-594.7049"
+       y="557.54529"
+       sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/weed1.png" />
+    <image
+       transform="scale(-1,1)"
+       width="70"
+       height="92"
+       preserveAspectRatio="none"
+       style="image-rendering:optimizeQuality"
+       xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/weed1.png"
+       id="image20404"
+       x="-658.9624"
+       y="565.96521"
+       sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/weed1.png" />
   </g>
   <circle
      r="63.5"
@@ -384,10 +446,10 @@
      inkscape:connector-curvature="0"
      sodipodi:nodetypes="ccccccc" />
   <path
-     sodipodi:nodetypes="ccccccccc"
+     sodipodi:nodetypes="ccccccccccccccc"
      inkscape:connector-curvature="0"
      id="path29646"
-     d="m 138.7381,558.32581 -17.93573,-120.80238 77.09812,-51.58399 50.03453,-79.7688 10.55042,-5.27522 -73.81982,225.7194 -2.26211,75.9127 L -3.1651278,602 Z"
+     d="m 138.7381,558.32581 -17.93573,-120.80238 77.09812,-51.58399 16.37085,-26.09964 -36.70925,-26.153 44.69573,13.42036 25.6772,-40.93652 10.55042,-5.27522 -18.29994,55.95586 -2.35422,7.1985 -2.83263,8.66137 -50.33303,153.90367 -2.26211,75.9127 L -3.1651278,602 Z"
      style="fill:#372f2a;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
   <path
      sodipodi:nodetypes="cccccccc"
@@ -395,4 +457,25 @@
      id="path29648"
      d="M 0.52752407,247.08824 86.51349,215.43697 l 116.58221,1.05504 55.91726,85.45845 -9.63133,0.10468 -49.45106,-74.59526 -111.306991,-1.05505 z"
      style="fill:#9a887c;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/rocks1.png"
+     y="206.25955"
+     x="-76.4879"
+     id="image20137"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/rocks1.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="28"
+     width="60"
+     transform="matrix(0.94462942,-0.32813909,0.32813909,0.94462942,0,0)" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/pebbles.png"
+     y="206.70506"
+     x="178.92035"
+     id="image20327"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/pebbles.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="15.5"
+     width="21.5" />
 </svg>

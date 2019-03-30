@@ -139,11 +139,17 @@ def load_level(level):
             else:
                 color = (0.5, 0.4, 0.3)
 
+            try:
+                friction = float(path.attrib['friction'])
+            except KeyError:
+                friction = None
+
             level.objs.append(
                 RockPoly(
                     verts.reshape(-1) * SVG_SCALE,
                     draw=draw,
                     color=color,
+                    friction=friction,
                 )
             )
 

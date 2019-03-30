@@ -14,7 +14,7 @@
    height="600"
    width="800"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="level7.svg">
+   sodipodi:docname="easy5.svg">
   <sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -28,9 +28,9 @@
      inkscape:window-height="1752"
      id="namedview4188"
      showgrid="false"
-     inkscape:zoom="1.8384776"
-     inkscape:cx="195.17746"
-     inkscape:cy="301.47863"
+     inkscape:zoom="2.0058593"
+     inkscape:cx="465.85246"
+     inkscape:cy="259.96328"
      inkscape:window-x="130"
      inkscape:window-y="48"
      inkscape:window-maximized="1"
@@ -483,7 +483,7 @@
     <rdf:RDF>
       <cc:Work
          rdf:about="">
-        <dc:title></dc:title>
+        <dc:title />
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
@@ -560,11 +560,12 @@
        r="63.5" />
   </g>
   <path
-     style="fill:#4f4f2b;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     style="fill:#2d2d19;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      d="m -1.2745032,231.8317 200.5052732,184.32215 63.84615,27.6923 59.23077,6.15385 43.84616,-2.30769 40.76923,-8.46154 43.84615,-22.30769 33.84615,-10.76923 6.92308,34.61538 L 480,459.23077 l -20,6.92308 -20.76923,26.15384 -6.92308,40 -27.69231,-23.84615 c 0,0 -8.5162,-8.79618 -16.97774,-2.64233 -8.46154,6.15384 -19.60406,11.25849 -19.60406,11.25849 L 361.53846,560.76923 360,601.53846 0,600 Z"
      id="path4942"
      inkscape:connector-curvature="0"
-     sodipodi:nodetypes="ccccccccccccccsccccc" />
+     sodipodi:nodetypes="ccccccccccccccsccccc"
+     friction="0.4" />
   <image
      y="219.61519"
      x="718.57001"
@@ -659,17 +660,17 @@
      y="203.09425"
      sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png" />
   <image
-     inkscape:transform-center-y="10.417626"
-     inkscape:transform-center-x="-6.7319459"
-     transform="matrix(-0.43479282,-0.90053051,-0.90053051,0.43479282,0,0)"
-     width="58"
-     height="23.5"
+     inkscape:transform-center-y="11.220957"
+     inkscape:transform-center-x="-10.46582"
+     transform="matrix(-0.58647176,-0.80996968,-0.80996968,0.58647176,0,0)"
+     width="71.751198"
+     height="29.071606"
      preserveAspectRatio="none"
      style="image-rendering:optimizeQuality"
      xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
      id="image5381"
-     x="-600.16589"
-     y="-113.67695"
+     x="-626.33588"
+     y="-27.845364"
      sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png" />
   <image
      sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
@@ -720,4 +721,186 @@
      id="image5387"
      x="516.2287"
      y="56.980629" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     y="281.7294"
+     x="-572.3147"
+     id="image24530"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="20.034739"
+     width="49.447441"
+     transform="matrix(-0.95957608,-0.28144936,-0.28144936,0.95957608,0,0)"
+     inkscape:transform-center-x="-10.437033"
+     inkscape:transform-center-y="1.6994196" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     y="27.391552"
+     x="-635.66418"
+     id="image24732"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="20.034739"
+     width="49.447441"
+     transform="matrix(-0.70682584,-0.70738761,-0.70738761,0.70682584,0,0)"
+     inkscape:transform-center-x="-8.3414326"
+     inkscape:transform-center-y="6.4992365" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     y="121.90111"
+     x="-544.21973"
+     id="image24734"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="20.034739"
+     width="49.447441"
+     transform="matrix(-0.70682584,-0.70738761,-0.70738761,0.70682584,0,0)"
+     inkscape:transform-center-x="-8.3414326"
+     inkscape:transform-center-y="6.4992365" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     y="-6.7759242"
+     x="-679.77136"
+     id="image24736"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="20.034739"
+     width="49.447441"
+     transform="matrix(-0.70682584,-0.70738761,-0.70738761,0.70682584,0,0)"
+     inkscape:transform-center-x="-8.3414326"
+     inkscape:transform-center-y="6.4992365" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     y="4.1927352"
+     x="-677.78156"
+     id="image24738"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="20.034739"
+     width="49.447441"
+     transform="matrix(-0.70682584,-0.70738761,-0.70738761,0.70682584,0,0)"
+     inkscape:transform-center-x="-8.3414326"
+     inkscape:transform-center-y="6.4992365" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     y="32.691681"
+     x="-690.33734"
+     id="image24740"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="25.352617"
+     width="62.572422"
+     transform="matrix(-0.70682584,-0.70738761,-0.70738761,0.70682584,0,0)"
+     inkscape:transform-center-x="-10.555513"
+     inkscape:transform-center-y="8.2243357" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     y="-168.1523"
+     x="-613.02893"
+     id="image24742"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="20.034739"
+     width="49.447441"
+     transform="matrix(-0.40256705,-0.9153905,-0.9153905,0.40256705,0,0)"
+     inkscape:transform-center-x="-5.4205381"
+     inkscape:transform-center-y="9.0794973" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     y="-109.35692"
+     x="-588.07239"
+     id="image24744"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="20.034739"
+     width="49.447441"
+     transform="matrix(-0.40256705,-0.9153905,-0.9153905,0.40256705,0,0)"
+     inkscape:transform-center-x="-5.4205381"
+     inkscape:transform-center-y="9.0794973" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     y="29.734018"
+     x="-409.01111"
+     id="image24746"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="20.034739"
+     width="49.447441"
+     transform="matrix(-0.40256705,-0.9153905,-0.9153905,0.40256705,0,0)"
+     inkscape:transform-center-x="-5.4205381"
+     inkscape:transform-center-y="9.0794973" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     y="6.3626699"
+     x="-463.57623"
+     id="image24748"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="20.034739"
+     width="49.447441"
+     transform="matrix(-0.40256705,-0.9153905,-0.9153905,0.40256705,0,0)"
+     inkscape:transform-center-x="-5.4205381"
+     inkscape:transform-center-y="9.0794973" />
+  <image
+     inkscape:transform-center-y="6.0062468"
+     inkscape:transform-center-x="-8.7031275"
+     transform="matrix(-0.74652956,-0.66535224,-0.66535224,0.74652956,0,0)"
+     width="49.447441"
+     height="20.034739"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     id="image24752"
+     x="-472.01761"
+     y="168.16141"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png" />
+  <image
+     inkscape:transform-center-y="6.0062468"
+     inkscape:transform-center-x="-8.7031275"
+     transform="matrix(-0.74652956,-0.66535224,-0.66535224,0.74652956,0,0)"
+     width="49.447441"
+     height="20.034739"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     id="image24754"
+     x="-321.32877"
+     y="183.46683"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     y="178.98016"
+     x="-260.66446"
+     id="image24750"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="20.034739"
+     width="49.447441"
+     transform="matrix(-0.74652956,-0.66535224,-0.66535224,0.74652956,0,0)"
+     inkscape:transform-center-x="-8.7031275"
+     inkscape:transform-center-y="6.0062468" />
+  <image
+     inkscape:transform-center-y="13.520855"
+     inkscape:transform-center-x="-8.0720629"
+     transform="matrix(-0.40256705,-0.9153905,-0.9153905,0.40256705,0,0)"
+     width="73.635239"
+     height="29.834965"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/leaf1.png"
+     id="image24730"
+     x="-562.93677"
+     y="-35.846077"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/leaf1.png" />
 </svg>

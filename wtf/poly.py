@@ -20,7 +20,7 @@ class RockPoly:
     FRICTION = 1.0
     ELASTICITY = 0.6
 
-    def __init__(self, verts, color=(1, 1, 1), draw=True):
+    def __init__(self, verts, color=(1, 1, 1), draw=True, friction=None):
         self.indexes = earcut(verts)
 
         if draw:
@@ -42,7 +42,7 @@ class RockPoly:
         tris = verts.reshape(-1, 2)[self.indexes].reshape(-1, 3, 2)
         for tri in tris:
             shp = Poly(space.static_body, tri)
-            shp.friction = self.FRICTION
+            shp.friction = friction or self.FRICTION
             shp.elasticity = self.ELASTICITY
             space.add(shp)
             self.shapes.append(shp)
