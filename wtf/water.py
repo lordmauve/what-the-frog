@@ -185,10 +185,10 @@ class Water:
 
         bb = actor.cache_bb()
 
-        a = round(bb.left - inst.x1) * inst.SUBDIV
-        b = round(bb.right - inst.x1) * inst.SUBDIV
-        if a < 0 or b > len(inst.levels):
-            return False
+        a = round((bb.left - inst.x1) * inst.SUBDIV)
+        b = round((bb.right - inst.x1) * inst.SUBDIV)
+        a = max(0, a)
+        b = min(b, len(inst.levels))
 
         levels = inst.levels[a:b] + inst.y
         frac_immersed = float(np.mean(np.clip(

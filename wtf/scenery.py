@@ -62,7 +62,7 @@ class Lilypad(Scenery):
         self.sprite.position = phys_to_screen(x, y)
 
         self.body = pymunk.Body(40, pymunk.inf)
-        self.body.buoyancy = Vec2d(0, 2600)
+        self.body.buoyancy = Vec2d(0, 2500)
         self.body.position = (x, y)
         self.shape = cbox(
             self.body,
