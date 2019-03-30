@@ -9,3 +9,10 @@ class LevelState(Enum):
     WON = 3
     PERFECT = 4
 
+
+class UnderwaterState(Enum):
+    """Whether an actor is underwater."""
+
+    DRY = 1
+    SURFACE = 2
+    UNDERWATER = 3

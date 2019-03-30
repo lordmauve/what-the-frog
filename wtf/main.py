@@ -11,10 +11,9 @@ from . import PIXEL_SCALE
 import wtf.keys
 from .directions import Direction
 from .physics import (
-    space, COLLISION_TYPE_FROG, COLLISION_TYPE_COLLECTIBLE,
-    create_walls
+    space, COLLISION_TYPE_FROG, COLLISION_TYPE_COLLECTIBLE, create_walls
 )
-from .state import LevelState
+from .state import LevelState, UnderwaterState
 from .water import Water, WaterBatch
 from .geom import SPACE_SCALE
 from .actors import actor_sprites, Frog, Fly
@@ -23,6 +22,7 @@ from .offscreen import OffscreenBuffer
 from .poly import RockPoly
 from .level_loader import load_level, NoSuchLevel
 from .screenshot import take_screenshot
+from . import sounds
 
 
 SCREENSHOTS = True
@@ -62,6 +62,8 @@ def on_collect(arbiter, space, data):
     level.actors.remove(fly.obj)
     if not Fly.insts:
         pyglet.clock.schedule_once(level.win, 0.8)
+
+    sounds.play('lick')
     return False
 
 
@@ -70,6 +72,26 @@ handler = space.add_collision_handler(
     COLLISION_TYPE_FROG
 )
 handler.begin = on_collect
+
+
+def on_hit(arbiter, space, data):
+    # Play a splatty sound
+    frog, other = arbiter.shapes
+    body = frog.body
+    if not body:
+        return True
+
+    v2 = body.velocity.get_length_sqrd()
+    vol = min(1.0, v2 / 1300)
+    if vol > 0.1:
+        sounds.play('splat', volume=vol)
+    return True
+
+
+handler = space.add_collision_handler(
+    COLLISION_TYPE_FROG, 0
+)
+handler.begin = on_hit
 
 
 class Level:
@@ -284,9 +306,17 @@ class JumpController:
     def jump(self, direction):
         """Request a jump in the given direction."""
         if self.available[direction]:
-            self.level.pc.body.velocity = self.JUMP_IMPULSES[direction]
+            pc = self.level.pc
+            pc.body.velocity = self.JUMP_IMPULSES[direction]
             self.available[direction] = False
             self.hud.set_available(direction, False)
+
+            is_dive = (
+                pc.body.underwater == UnderwaterState.UNDERWATER
+                or pc.body.underwater == UnderwaterState.SURFACE
+                and 'D' in direction.name
+            )
+            sounds.jump(underwater=is_dive)
             if not any(self.available.values()):
                 pyglet.clock.schedule_once(self.level.fail, 1.3)
         else:

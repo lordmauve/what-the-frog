@@ -4,6 +4,8 @@ import numpy as np
 import moderngl
 
 from .physics import space, box, BUOYANCY, WATER_DRAG, COLLISION_TYPE_WATER
+from .state import UnderwaterState
+from . import sounds
 
 
 class WaterBatch:
@@ -201,6 +203,9 @@ class Water:
                 inst.velocities[a:b] * f +
                 vy * abs(vy) * 40 * (1.0 - f) / (b - a) * dt
             )
+            body.underwater = UnderwaterState.SURFACE
+        else:
+            body.underwater = UnderwaterState.UNDERWATER
 
         buoyancy = BUOYANCY * bb.area()
         drag = -body.velocity * WATER_DRAG
@@ -210,5 +215,24 @@ class Water:
         body.apply_force_at_local_point(force, body.center_of_gravity)
         return False
 
+    def separate(arbiter, space, data):
+        water, actor = arbiter.shapes
+        body = actor.body
+        if not body:
+            return False
+        body.underwater = UnderwaterState.DRY
+
+    def begin(arbiter, space, data):
+        water, other = arbiter.shapes
+        if other.body:
+            speed = other.body.velocity.length
+            if speed > 20:
+                sounds.play('splash1')
+            elif speed > 10:
+                sounds.play('splash1', volume=(speed - 10) / 10)
+        return True
+
     handler = space.add_wildcard_collision_handler(COLLISION_TYPE_WATER)
+    handler.begin = begin
     handler.pre_solve = pre_solve
+    handler.separate = separate

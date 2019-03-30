@@ -14,6 +14,7 @@ from .physics import (
     space, cbox, COLLISION_TYPE_FROG, COLLISION_TYPE_COLLECTIBLE
 )
 from .sprites import load_centered, center
+from .state import UnderwaterState
 
 
 actor_sprites = pyglet.graphics.Batch()
@@ -75,6 +76,10 @@ class Frog:
         self.sprite.position = phys_to_screen(x, y)
         self.body = pymunk.Body(5, pymunk.inf)
         self.body.position = (x, y)
+
+        # Updated by water collision handler
+        self.body.underwater = UnderwaterState.DRY
+
         self.shape = cbox(
             self.body,
             0, 0,
@@ -246,10 +251,13 @@ class Fish(Fly):
     def wander(self, t):
         """Return a small lissajous wander."""
         xperiod = 0.3
+        sx = sin(xperiod * t)
+        px = sx * abs(sx)
+
         vx = cos(xperiod * t)
         self.sprite._scale_x = copysign(max(0.3, abs(vx)), vx)
         return Vec2d(
-            1.5 * sin(xperiod * t),
+            1.5 * px,
             0.2 * sin(0.2 * t),
         )
 
