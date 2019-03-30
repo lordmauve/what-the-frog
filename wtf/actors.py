@@ -67,13 +67,30 @@ class Tongue:
 
 class Frog:
     SPRITE = load_centered('jumper')
+    LEGS_V = load_centered('legs-v')
+    LEGS_V.anchor_y = LEGS_V.height
+    LEGS_H = load_centered('legs-h')
+    LEGS_H.anchor_x = 16
+    LEGS_H.anchor_y = 30
+
+    legs_group = pyglet.graphics.OrderedGroup(0)
+    body_group = pyglet.graphics.OrderedGroup(1)
 
     # How long it takes to lick, in seconds
     TONGUE_SPEED = 0.2  # seconds
 
     def __init__(self, x, y):
-        self.sprite = pyglet.sprite.Sprite(self.SPRITE, batch=actor_sprites)
-        self.sprite.position = phys_to_screen(x, y)
+        self.legs = pyglet.sprite.Sprite(
+            self.LEGS_V,
+            batch=actor_sprites,
+            group=self.body_group
+        )
+        self.sprite = pyglet.sprite.Sprite(
+            self.SPRITE,
+            batch=actor_sprites,
+            group=self.body_group
+        )
+        self.legs.position = self.sprite.position = phys_to_screen(x, y)
         self.body = pymunk.Body(5, pymunk.inf)
         self.body.position = (x, y)
 
@@ -108,7 +125,21 @@ class Frog:
         return Vec2d(*self.sprite.position)
 
     def update(self, dt):
-        self.sprite.position = self.body.position / SPACE_SCALE
+        pos = self.body.position / SPACE_SCALE
+        self.sprite.position = self.legs.position = pos
+        vx, vy = self.body.velocity
+        if abs(vy) > abs(vx):
+            self.legs.image = self.LEGS_V
+            self.legs.update(
+                scale_x=1,
+                scale_y=copysign(min(1.0, abs(vy) * 0.1), vy),
+            )
+        else:
+            self.legs.image = self.LEGS_H
+            self.legs.update(
+                scale_x=copysign(min(1.0, abs(vx) * 0.1), -vx),
+                scale_y=1,
+            )
 
         # Update the tongue
         if self.tongue:
@@ -126,6 +157,7 @@ class Frog:
         if self.tongue:
             self.tongue.delete()
         self.sprite.delete()
+        self.legs.delete()
         space.remove(self.body, self.shape)
 
 
