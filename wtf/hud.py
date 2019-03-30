@@ -85,6 +85,10 @@ class HUD:
         s.scale = 3
 
     def update(self, dt):
+        if self.card:
+            for v in self.arrows.values():
+                v.opacity = 0
+            return
         for d, s in self.arrows.items():
             s.scale = tween(s.scale, 1, dt)
             if not self.available[d]:

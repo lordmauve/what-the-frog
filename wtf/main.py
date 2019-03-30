@@ -133,9 +133,11 @@ class Level:
             idx = LEVEL_SETS.index(stem)
             if idx + 1 == len(LEVEL_SETS):
                 # TODO: show "You win" card
-                return
-            stem = LEVEL_SETS[idx + 1]
-            self.load(f"{stem}1")
+                hud.show_card('end')
+                self.state = LevelState.END
+            else:
+                stem = LEVEL_SETS[idx + 1]
+                self.load(f"{stem}1")
 
     @property
     def won(self):

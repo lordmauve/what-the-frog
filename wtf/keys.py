@@ -103,11 +103,19 @@ class RestartKeyHandler:
         self.last_key = None
         self.level = level
 
+    def on_key_release(self, symbol, modifiers):
+        if self.level.state is not LevelState.PLAYING:
+            return EVENT_HANDLED
+        return EVENT_UNHANDLED
+
     def on_key_press(self, symbol, modifiers):
         if self.level.state is not LevelState.PLAYING:
             if symbol == key.ESCAPE and \
                     self.level.state is not LevelState.PERFECT:
                 self.level.reload()
+                return EVENT_HANDLED
+            elif self.level.state is LevelState.END:
+                # TODO: return to the title screen
                 return EVENT_HANDLED
             elif self.level.won:
                 self.level.next_level()

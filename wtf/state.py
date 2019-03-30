@@ -8,6 +8,7 @@ class LevelState(Enum):
     FAILED = 2
     WON = 3
     PERFECT = 4
+    END = 5
 
 
 class UnderwaterState(Enum):
