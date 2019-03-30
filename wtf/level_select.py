@@ -41,7 +41,7 @@ class LevelList:
         return group, digit
 
     def next(self, current):
-        idx = self.levels.index[current]
+        idx = self.levels.index(current)
         try:
             return self.levels[idx + 1]
         except KeyError:
@@ -52,12 +52,15 @@ LEVELS = LevelList()
 
 
 class HopTween:
-    def __init__(self, sprite, duration=0.2):
+    def __init__(self, screen, sprite, duration=0.2):
+        self.screen = screen
         self.sprite = sprite
         self.duration = duration
 
     def go(self, target_pos):
-        self.start_pos = Vec2d(*self.sprite.position)
+        start_y = self.sprite.y
+        start_x = self.sprite.real_x
+        self.start_pos = Vec2d(start_x, start_y)
         self.target_pos = Vec2d(*target_pos)
 
         self.t = 0
@@ -68,17 +71,21 @@ class HopTween:
             return
         self.t += dt
         if self.t > self.duration:
-            self.sprite.position = self.target_pos
+            x, y = self.target_pos
+            self.sprite.position = (x - self.screen.offset, y)
+            self.sprite.real_x = x
+            self.sprite.scale = 1
             return
 
         frac = self.t / self.duration
 
-        position = self.start_pos + frac * (self.target_pos - self.start_pos)
+        x, y = self.start_pos + frac * (self.target_pos - self.start_pos)
         scale = 1.0 + frac * (1.0 - frac) * 4
         self.sprite.update(
-            *position,
+            x - self.screen.offset, y,
             scale=scale
         )
+        self.sprite.real_x = x
         pyglet.clock.schedule_once(self.update, 1 / 60)
 
     def stop(self):
@@ -93,6 +100,9 @@ class LevelSelectScreen:
     def __init__(self, window, slowmo=False):
         self.slowmo = slowmo
         self.window = window
+
+        self.offset = 0
+        self.target_offset = 0
 
         self.sprites = [
             pyglet.sprite.Sprite(
@@ -116,18 +126,23 @@ class LevelSelectScreen:
             group=self.cursorgroup,
         )
         self.sprites.append(self.frog)
-        self.tween = HopTween(self.frog)
+        for s in self.sprites:
+            s.real_x = s.x
+        self.tween = HopTween(self, self.frog)
 
         for i, level in enumerate(LEVELS, start=1):
+            x, y = self.screen_pos(i)
             s = pyglet.sprite.Sprite(
                 load_centered(level, 'levelthumbs'),
-                *self.screen_pos(i),
+                x, y,
                 batch=actor_sprites,
                 group=self.basegroup,
             )
+            s.real_x = x
             s.scale = 2
             self.sprites.append(s)
 
+        self.max_offset = s.x - window.width + 400
         self.cursor = 0
 
     def jump(self, direction):
@@ -171,10 +186,14 @@ class LevelSelectScreen:
             else:
                 newcursor -= 3
 
-        if newcursor != self.cursor and 0 <= newcursor < len(LEVELS):
+        if newcursor != self.cursor and 0 <= newcursor <= len(LEVELS):
             self.cursor = newcursor
-            self.tween.go(self.screen_pos(self.cursor))
             sounds.play('ribbit')
+
+            x, y = self.screen_pos(self.cursor)
+            frog_offset = x - self.screen_pos(0)[0]
+            self.target_offset = min(self.max_offset, max(0, frog_offset))
+            self.tween.go((x, y))
 
     def screen_pos(self, i):
         """Screen pos for the level at index i."""
@@ -191,6 +210,12 @@ class LevelSelectScreen:
         y = top - yspacing * (row - 0.5 * (col % 2))
         return x, y
 
+    def update(self, dt):
+        frac = 0.1 ** dt
+        self.offset = frac * self.offset + (1.0 - frac) * self.target_offset
+        for s in self.sprites:
+            s.x = s.real_x - self.offset
+
     def start(self):
         try:
             self.window.pop_handlers()
@@ -201,6 +226,7 @@ class LevelSelectScreen:
         from .main import hud
         hud.clear_card()
         hud.card = True  # hide the arrows
+        pyglet.clock.schedule(self.update)
 
     def on_key_press(self, symbol, modifiers):
         if symbol in (pyglet.window.key.ENTER, pyglet.window.key.SPACE):
@@ -211,14 +237,18 @@ class LevelSelectScreen:
             self.window.pop_handlers()
             TitleScreen().start()
 
-    def start_selected(self):
-        from .main import level, set_keyhandler, hud
+    def delete(self):
         for s in self.sprites:
             s.delete()
         self.window.pop_handlers()
         self.window.pop_handlers()
         self.tween.stop()
+        pyglet.clock.unschedule(self.update)
+
+    def start_selected(self):
+        from .main import level, set_keyhandler, hud
+        self.delete()
 
         set_keyhandler(self.slowmo)
         hud.card = None
-        level.load(LEVELS[self.cursor])
+        level.load(LEVELS[self.cursor - 1])
