@@ -81,6 +81,12 @@ parser.add_argument(
     default=default_scale(),
     help="The scaling to use. Defaults to a value that will fit your screen."
 )
+parser.add_argument(
+    '--easy',
+    action='store_true',
+    help="Drop into slow-mo while a key is held.",
+    default=False
+)
 
 args = parser.parse_args()
 
@@ -88,4 +94,4 @@ import wtf
 wtf.PIXEL_SCALE *= args.pixel_scale
 
 import wtf.main
-wtf.main.run(args.levelname)
+wtf.main.run(args.levelname, slowmo=args.easy)

@@ -1,5 +1,3 @@
-from enum import Enum
-
 import pyglet
 from pyglet import gl
 import pyglet.sprite
@@ -7,24 +5,23 @@ import pyglet.resource
 from pymunk.vec2d import Vec2d
 import moderngl
 from pyrr import Matrix44
-from pyglet.window import key
-from pyglet.event import EVENT_UNHANDLED, EVENT_HANDLED
 import pymunk.pyglet_util
 
-from wtf import PIXEL_SCALE
+from . import PIXEL_SCALE
 import wtf.keys
-from wtf.directions import Direction
-from wtf.physics import (
+from .directions import Direction
+from .physics import (
     space, COLLISION_TYPE_FROG, COLLISION_TYPE_COLLECTIBLE,
     create_walls
 )
-from wtf.water import Water, WaterBatch
-from wtf.geom import SPACE_SCALE
-from wtf.actors import actor_sprites, Frog, Fly
-from wtf.hud import HUD
-from wtf.offscreen import OffscreenBuffer
-from wtf.poly import RockPoly
-from wtf.level_loader import load_level, NoSuchLevel
+from .state import LevelState
+from .water import Water, WaterBatch
+from .geom import SPACE_SCALE
+from .actors import actor_sprites, Frog, Fly
+from .hud import HUD
+from .offscreen import OffscreenBuffer
+from .poly import RockPoly
+from .level_loader import load_level, NoSuchLevel
 from .screenshot import take_screenshot
 
 
@@ -40,6 +37,8 @@ LEVEL_SETS = [
 WIDTH = 1600   # Width in hidpi pixels
 HEIGHT = 1200  # Height in hidpi pixels
 
+
+slowmo = False
 
 window = pyglet.window.Window(
     width=round(WIDTH * PIXEL_SCALE),
@@ -71,13 +70,6 @@ handler = space.add_collision_handler(
     COLLISION_TYPE_FROG
 )
 handler.begin = on_collect
-
-
-class LevelState(Enum):
-    PLAYING = 1
-    FAILED = 2
-    WON = 3
-    PERFECT = 4
 
 
 class Level:
@@ -175,9 +167,6 @@ class Level:
         self.delete()
         self.create()
 
-    def __del__(self):
-        self.delete()
-
     def delete(self):
         for o in self.objs:
             try:
@@ -190,6 +179,9 @@ class Level:
             w.delete()
         self.pc = None
         space.remove(*self.static_shapes)
+        self.static_shapes = []
+        self.actors = []
+        self.objs = []
         self.fg_batch = pyglet.graphics.Batch()
         assert not space.bodies, f"Space contains bodies: {space.bodies}"
         assert not space.shapes, f"Space contains shapes: {space.shapes}"
@@ -209,6 +201,9 @@ pymunk_drawoptions = pymunk.pyglet_util.DrawOptions()
 
 
 def on_draw(dt):
+    if slowmo:
+        dt *= 1 / 3
+
     # Update graphical things
     for a in level.actors:
         a.update(dt)
@@ -301,53 +296,45 @@ class JumpController:
 hud = HUD(WIDTH, HEIGHT)
 controls = JumpController(level, hud)
 
-
-keyhandler = wtf.keys.KeyInputHandler(
-    jump=controls.jump,
-    window=window,
-)
-window.push_handlers(keyhandler)
-
-last_key = None
+keyhandler = None
 
 
-def on_key_press(symbol, modifiers):
-    global last_key
+def set_keyhandler(slowmo=False):
+    global keyhandler
+    if keyhandler:
+        window.pop_handlers()
+        window.pop_handlers()
 
-    if level.state is not LevelState.PLAYING:
-        if symbol == key.ESCAPE and level.state is not LevelState.PERFECT:
-            level.reload()
-            return EVENT_HANDLED
-        elif level.won:
-            level.next_level()
-            return EVENT_HANDLED
-
-    if symbol == key.ESCAPE:
-        if last_key == key.ESCAPE:
-            pyglet.clock.unschedule(on_draw)
-            pyglet.clock.unschedule(update_physics)
-            pyglet.app.exit()
-            return EVENT_HANDLED
-        level.reload()
-        last_key = symbol
-        return EVENT_HANDLED
-
-    last_key = symbol
-    return EVENT_UNHANDLED
+    cls = (
+        wtf.keys.SlowMoKeyInputHandler if slowmo else wtf.keys.KeyInputHandler
+    )
+    keyhandler = cls(
+        jump=controls.jump,
+        window=window,
+    )
+    window.push_handlers(keyhandler)
+    window.push_handlers(wtf.keys.RestartKeyHandler(level))
 
 
-window.push_handlers(on_key_press)
+def exit():
+    """Exit the game."""
+    pyglet.clock.unschedule(on_draw)
+    pyglet.clock.unschedule(update_physics)
+    level.delete()
+    pyglet.app.exit()
 
 
 def update_physics(dt):
     if level.won is not None:
         return
 
-    for _ in range(3):
+    steps = 1 if slowmo else 3
+    for _ in range(steps):
         space.step(1 / 180)
 
 
-def run(level_name=None):
+def run(level_name=None, slowmo=False):
+    set_keyhandler(slowmo)
     level.load(level_name or "easy1")
     pyglet.clock.set_fps_limit(60)
     pyglet.clock.schedule(on_draw)

@@ -124,11 +124,29 @@ class Frog:
         space.remove(self.body, self.shape)
 
 
+class SpriteAnim:
+    """Animation that is not tied directly to Pyglet's clock."""
+
+    def __init__(self, sprite, seq, rate=1 / 20):
+        self.sprite = sprite
+        self.seq = seq
+        self.rate = rate
+
+        self.frame = 0
+        self.t = 0
+
+    def update(self, dt):
+        self.t += dt
+        f, self.t = divmod(self.t, self.rate)
+        self.frame = (self.frame + int(f)) % len(self.seq)
+        self.sprite.image = self.seq[self.frame]
+
+
 class Fly:
     DIMS = (1, 4)
     SPRITE = pyglet.resource.image('sprites/fly.png')
-    seq = center(pyglet.image.ImageGrid(SPRITE, *DIMS).get_texture_sequence())
-    ANIM = seq.get_animation(0.05)
+    SEQ = center(pyglet.image.ImageGrid(SPRITE, *DIMS).get_texture_sequence())
+    RATE = 0.05
 
     CATCH_RADIUS = 2
 
@@ -138,10 +156,12 @@ class Fly:
         self.pos = Vec2d(x + 0.5, y + 0.5)
         self.t = 0
         self.sprite = pyglet.sprite.Sprite(
-            self.ANIM,
+            self.SEQ[0],
             batch=actor_sprites,
             usage='stream'
         )
+        self.sprite_anim = SpriteAnim(self.sprite, self.SEQ, self.RATE)
+
         self.sprite.position = phys_to_screen(self.pos)
 
         self.shape = pymunk.Circle(
@@ -165,6 +185,7 @@ class Fly:
         )
 
     def update(self, dt):
+        self.sprite_anim.update(dt)
         self.t += dt
         self.sprite._rotation = 10 * sin(self.t)
         self.sprite._x, self.sprite._y = phys_to_screen(
@@ -193,8 +214,8 @@ class Fly:
 class Butterfly(Fly):
     DIMS = (1, 6)
     SPRITE = pyglet.resource.image('sprites/butterfly.png')
-    seq = center(pyglet.image.ImageGrid(SPRITE, *DIMS).get_texture_sequence())
-    ANIM = seq.get_animation(0.1)
+    SEQ = center(pyglet.image.ImageGrid(SPRITE, *DIMS).get_texture_sequence())
+    RATE = 0.1
 
     COLORS = [
         (211, 167, 29),
@@ -217,7 +238,8 @@ class Butterfly(Fly):
 
 
 class Fish(Fly):
-    ANIM = SPRITE = center(pyglet.resource.image('sprites/fish.png'))
+    SPRITE = center(pyglet.resource.image('sprites/fish.png'))
+    SEQ = [SPRITE]
 
     CATCH_RADIUS = 2
 
@@ -233,7 +255,8 @@ class Fish(Fly):
 
 
 class Goldfish(Fish):
-    ANIM = SPRITE = center(pyglet.resource.image('sprites/goldfish.png'))
+    SPRITE = center(pyglet.resource.image('sprites/goldfish.png'))
+    SEQ = [SPRITE]
 
     def collect(self, pc, controls):
         """Replenish jumps when this Goldfish is collected."""
