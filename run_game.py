@@ -73,7 +73,7 @@ parser.add_argument(
     'levelname',
     nargs='?',
     help="The level to start on.",
-    default="level1"
+    default=None
 )
 parser.add_argument(
     '--pixel-scale',

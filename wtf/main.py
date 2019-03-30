@@ -24,7 +24,15 @@ from wtf.actors import actor_sprites, Frog, Fly
 from wtf.hud import HUD
 from wtf.offscreen import OffscreenBuffer
 from wtf.poly import RockPoly
-from wtf.level_loader import load_level
+from wtf.level_loader import load_level, NoSuchLevel
+
+
+START_LEVEL = "easy1"
+LEVEL_SETS = [
+    "easy",
+    "level",
+    "hard",
+]
 
 
 WIDTH = 1600   # Width in hidpi pixels
@@ -95,7 +103,15 @@ class Level:
         stem = self.name.rstrip('0123456789')
         digit = int(self.name[len(stem):])
         digit += 1
-        self.load(f"{stem}{digit}")
+        try:
+            self.load(f"{stem}{digit}")
+        except NoSuchLevel:
+            idx = LEVEL_SETS.index(stem)
+            if idx + 1 == len(LEVEL_SETS):
+                # TODO: show "You win" card
+                return
+            stem = LEVEL_SETS[idx + 1]
+            self.load(f"{stem}1")
 
     @property
     def won(self):
@@ -321,8 +337,8 @@ def update_physics(dt):
         space.step(1 / 180)
 
 
-def run(level_name="level1"):
-    level.load(level_name)
+def run(level_name=None):
+    level.load(level_name or "easy1")
     pyglet.clock.set_fps_limit(60)
     pyglet.clock.schedule(on_draw)
     pyglet.clock.schedule(update_physics)
