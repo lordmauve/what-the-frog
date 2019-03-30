@@ -365,9 +365,49 @@ def update_physics(dt):
         space.step(1 / 180)
 
 
+class TitleScreen:
+    def start(self):
+        try:
+            window.pop_handlers()
+        except Exception:
+            pass
+        hud.show_card('title')
+        window.push_handlers(self)
+
+    def on_key_press(self, symbol, modifiers):
+        if symbol == pyglet.window.key.ESCAPE:
+            exit()
+        GameModeScreen().start()
+
+
+class GameModeScreen:
+    START_LEVEL = 'easy1'
+    EASY = pyglet.window.key._1
+    NORMAL = pyglet.window.key._2
+
+    def start(self):
+        try:
+            window.pop_handlers()
+        except Exception:
+            pass
+        hud.show_card('game-mode')
+        window.push_handlers(self)
+
+    def on_key_press(self, symbol, modifiers):
+        if symbol == pyglet.window.key.ESCAPE:
+            TitleScreen().start()
+        elif symbol in (self.EASY, self.NORMAL):
+            window.pop_handlers()
+            set_keyhandler(slowmo=(symbol == self.EASY))
+            level.load(self.START_LEVEL)
+
+
 def run(level_name=None, slowmo=False):
-    set_keyhandler(slowmo)
-    level.load(level_name or "easy1")
+    if level_name:
+        set_keyhandler(slowmo)
+        level.load(level_name)
+    else:
+        TitleScreen().start()
     pyglet.clock.set_fps_limit(60)
     pyglet.clock.schedule(on_draw)
     pyglet.clock.schedule(update_physics)
