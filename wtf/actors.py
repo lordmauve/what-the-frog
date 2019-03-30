@@ -128,17 +128,20 @@ class Frog:
         pos = self.body.position / SPACE_SCALE
         self.sprite.position = self.legs.position = pos
         vx, vy = self.body.velocity
+        angle = self.body.velocity.get_angle_degrees()
         if abs(vy) > abs(vx):
             self.legs.image = self.LEGS_V
             self.legs.update(
                 scale_x=1,
-                scale_y=copysign(min(1.0, abs(vy) * 0.1), vy),
+                scale_y=min(1.0, abs(vy) * 0.1),
+                rotation=90 - angle,
             )
         else:
             self.legs.image = self.LEGS_H
             self.legs.update(
                 scale_x=copysign(min(1.0, abs(vx) * 0.1), -vx),
                 scale_y=1,
+                rotation=0,
             )
 
         # Update the tongue
