@@ -56,6 +56,7 @@ class Lilypad(Scenery):
     SPRITE.anchor_y = SPRITE.height * 0.78
 
     def __init__(self, x, y):
+        y += 1
         self.sprite = pyglet.sprite.Sprite(self.SPRITE, batch=actor_sprites)
         self.sprite.position = phys_to_screen(x, y)
 
