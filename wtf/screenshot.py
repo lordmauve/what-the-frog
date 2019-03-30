@@ -18,7 +18,7 @@ def screenshot_path(comp_start=datetime.date(2019, 3, 24)):
             return str(p)
 
 
-def take_screenshot(window):
+def take_screenshot(window, path=None):
     """Take a screenshot of the given window.
 
     Save it to a new path returned by screenshot_path.
@@ -32,6 +32,6 @@ def take_screenshot(window):
         window.width,
         window.height
     )
-    image.save(screenshot_path())
+    image.save(path or screenshot_path())
     # re-enable alpha channel transfer
     gl.glPixelTransferf(gl.GL_ALPHA_BIAS, 0.0)

@@ -25,8 +25,10 @@ from wtf.hud import HUD
 from wtf.offscreen import OffscreenBuffer
 from wtf.poly import RockPoly
 from wtf.level_loader import load_level, NoSuchLevel
+from .screenshot import take_screenshot
 
 
+SCREENSHOTS = True
 START_LEVEL = "easy1"
 LEVEL_SETS = [
     "easy",
@@ -97,6 +99,14 @@ class Level:
         """Load the given level name."""
         self.name = level_name
         self.reload()
+        if SCREENSHOTS:
+            pyglet.clock.schedule_once(
+                lambda dt: take_screenshot(
+                    window,
+                    f'assets/levelpics/{level_name}.png'
+                ),
+                0.3
+            )
 
     def next_level(self):
         """Progress to the next level."""
