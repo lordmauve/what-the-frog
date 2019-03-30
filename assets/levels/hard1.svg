@@ -16,7 +16,7 @@
    id="svg4881"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="level4.svg">
+   sodipodi:docname="hard1.svg">
   <defs
      id="defs4883">
     <marker
@@ -287,9 +287,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.895658"
-     inkscape:cx="320.99937"
-     inkscape:cy="195.61788"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="375.70075"
+     inkscape:cy="64.009515"
      inkscape:document-units="px"
      inkscape:current-layer="svg4881"
      showgrid="false"
@@ -304,7 +304,7 @@
      y="0"
      x="0"
      id="image10603"
-     xlink:href="file:///home/mauve/dev/pyweek27/assets/backgrounds/level1.png"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/backgrounds/default.jpg"
      style="image-rendering:optimizeQuality"
      preserveAspectRatio="none"
      height="600"
@@ -314,7 +314,7 @@
     <rdf:RDF>
       <cc:Work
          rdf:about="">
-        <dc:title></dc:title>
+        <dc:title />
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
@@ -458,8 +458,113 @@
      id="circle27205"
      style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ffcc00;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:7.99999998, 7.99999998;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
   <path
-     style="fill:#676c53;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="m 1.0550426,277.68448 51.6970884,204.67827 117.637249,49.05948 258.48544,5.27521 371.375,-1.58256 L 800,600 0,600 Z"
+     style="fill:#514c3d;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 1.0550426,412.43829 109.8474674,0.94957 88.7569,8.81466 5.23729,54.16293 1.16561,55.05678 222.81251,5.27521 261.73396,-1.09203 33.84462,-55.84386 37.17573,-21.64008 39.85552,-3.4742 -1.23483,80.46761 L 800,600 0,600 Z"
      id="path28650"
-     inkscape:connector-curvature="0" />
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cccccccccccccc" />
+  <image
+     width="50.5"
+     height="33.5"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/bush.png"
+     id="image30558"
+     x="287.23492"
+     y="520.34277"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/bush.png" />
+  <image
+     width="50.5"
+     height="33.5"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/bush.png"
+     id="image30560"
+     x="318.68854"
+     y="516.24011"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/bush.png" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/bush.png"
+     y="517.60767"
+     x="-405.32928"
+     id="image30447"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/bush.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="33.5"
+     width="50.5"
+     transform="scale(-1,1)" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/bigrock.png"
+     y="409.80304"
+     x="-104.66559"
+     id="image30618"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/bigrock.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="131.5"
+     width="316" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/flatrock.png"
+     y="453.93384"
+     x="688.42175"
+     id="image30680"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/flatrock.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="87"
+     width="189" />
+  <image
+     width="21.5"
+     height="15.5"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/pebbles.png"
+     id="image30745"
+     x="122.25"
+     y="409.25"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/pebbles.png" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/pebbles.png"
+     y="525.43384"
+     x="-688.42175"
+     id="image30742"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/pebbles.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="15.5"
+     width="21.5"
+     transform="scale(-1,1)" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/bush.png"
+     y="520.34277"
+     x="460.23492"
+     id="image30747"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/bush.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="33.5"
+     width="50.5" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/bush.png"
+     y="521.18988"
+     x="-644.7973"
+     id="image30749"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/bush.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="33.5"
+     width="50.5"
+     transform="scale(-1,1)" />
+  <image
+     width="50.5"
+     height="33.5"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/bush.png"
+     id="image30751"
+     x="640.49219"
+     y="419.30038"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/bush.png"
+     transform="matrix(0.98663694,0.16293419,-0.16293419,0.98663694,0,0)" />
 </svg>

@@ -255,9 +255,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.895658"
-     inkscape:cx="490.93191"
-     inkscape:cy="343.32385"
+     inkscape:zoom="2.0682457"
+     inkscape:cx="378.75998"
+     inkscape:cy="160.78755"
      inkscape:document-units="px"
      inkscape:current-layer="svg4881"
      showgrid="false"
@@ -289,7 +289,7 @@
     <rdf:RDF>
       <cc:Work
          rdf:about="">
-        <dc:title></dc:title>
+        <dc:title />
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
@@ -424,4 +424,104 @@
      id="path29625"
      d="m 121.3299,486.05539 -68.050248,-69.6328 31.651278,-14.24308 55.38974,84.40341 19.51828,115.9446 L 144.01332,602 Z"
      style="fill:#917c6f;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+  <image
+     width="8"
+     height="192.5"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/kelp.png"
+     id="image26927"
+     x="721.73584"
+     y="422.03824"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/kelp.png" />
+  <image
+     width="8"
+     height="192.5"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/kelp.png"
+     id="image26929"
+     x="732.37286"
+     y="400.76416"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/kelp.png" />
+  <image
+     width="8"
+     height="192.5"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/kelp.png"
+     id="image26931"
+     x="737.20789"
+     y="410.43417"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/kelp.png" />
+  <image
+     width="8"
+     height="192.5"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/kelp.png"
+     id="image26933"
+     x="756.06445"
+     y="440.89478"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/kelp.png" />
+  <image
+     width="8"
+     height="192.5"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/kelp.png"
+     id="image26935"
+     x="713.03284"
+     y="461.20184"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/kelp.png" />
+  <image
+     width="8"
+     height="192.5"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/kelp.png"
+     id="image26937"
+     x="25.010096"
+     y="247.97766"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/kelp.png" />
+  <image
+     width="6.0710173"
+     height="146.08385"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/kelp.png"
+     id="image26939"
+     x="36.611622"
+     y="282.78976"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/kelp.png" />
+  <image
+     width="6.0710173"
+     height="146.08385"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/kelp.png"
+     id="image26941"
+     x="421.96237"
+     y="454.4328"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/kelp.png" />
+  <image
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/kelp.png"
+     y="414.78568"
+     x="432.11591"
+     id="image26828"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/kelp.png"
+     style="image-rendering:optimizeQuality"
+     preserveAspectRatio="none"
+     height="175.57744"
+     width="7.2967253" />
+  <image
+     width="70"
+     height="92"
+     preserveAspectRatio="none"
+     style="image-rendering:optimizeQuality"
+     xlink:href="file:///home/mauve/dev/pyweek27/assets/scenery/weed1.png"
+     id="image27005"
+     x="140.99455"
+     y="526.92395"
+     sodipodi:absref="/home/mauve/dev/pyweek27/assets/scenery/weed1.png" />
 </svg>
