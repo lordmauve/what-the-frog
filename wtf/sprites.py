@@ -2,7 +2,13 @@ import pyglet.resource
 
 
 def load_centered(name, group='sprites'):
-    img = pyglet.resource.image(f'{group}/{name}.png')
+    try:
+        img = pyglet.resource.image(f'{group}/{name}.png')
+    except pyglet.resource.ResourceNotFoundException as e:
+        try:
+            img = pyglet.resource.image(f'{group}/{name}.jpg')
+        except pyglet.resource.ResourceNotFoundException:
+            raise e from None
     img.anchor_x = img.width // 2
     img.anchor_y = img.height // 2
     return img

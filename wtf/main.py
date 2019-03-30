@@ -23,15 +23,10 @@ from .poly import RockPoly
 from .level_loader import load_level, NoSuchLevel
 from .screenshot import take_screenshot
 from . import sounds
+from .level_select import LevelSelectScreen, LEVELS
 
 
 SCREENSHOTS = True
-START_LEVEL = "easy1"
-LEVEL_SETS = [
-    "easy",
-    "level",
-    "hard",
-]
 
 
 WIDTH = 1600   # Width in hidpi pixels
@@ -124,20 +119,12 @@ class Level:
 
     def next_level(self):
         """Progress to the next level."""
-        stem = self.name.rstrip('0123456789')
-        digit = int(self.name[len(stem):])
-        digit += 1
         try:
-            self.load(f"{stem}{digit}")
+            self.load(LEVELS.next(self.name))
         except NoSuchLevel:
-            idx = LEVEL_SETS.index(stem)
-            if idx + 1 == len(LEVEL_SETS):
-                # TODO: show "You win" card
-                hud.show_card('end')
-                self.state = LevelState.END
-            else:
-                stem = LEVEL_SETS[idx + 1]
-                self.load(f"{stem}1")
+            # Show "You win" card
+            hud.show_card('end')
+            self.state = LevelState.END
 
     @property
     def won(self):
@@ -414,9 +401,8 @@ class GameModeScreen:
         if symbol == pyglet.window.key.ESCAPE:
             TitleScreen().start()
         elif symbol in (self.EASY, self.NORMAL):
-            window.pop_handlers()
-            set_keyhandler(slowmo=(symbol == self.EASY))
-            level.load(self.START_LEVEL)
+            slowmo = symbol == self.EASY
+            LevelSelectScreen(window, slowmo).start()
 
 
 def run(level_name=None, slowmo=False):

@@ -192,11 +192,10 @@ class Fly:
     def update(self, dt):
         self.sprite_anim.update(dt)
         self.t += dt
-        self.sprite._rotation = 10 * sin(self.t)
-        self.sprite._x, self.sprite._y = phys_to_screen(
-            self.pos + self.wander(self.t)
+        self.sprite.update(
+            *phys_to_screen(self.pos + self.wander(self.t)),
+            rotation=10 * sin(self.t),
         )
-        self.sprite._update_position()
 
     def collect(self, pc, controls):
         """Called when this Fly is collected."""
