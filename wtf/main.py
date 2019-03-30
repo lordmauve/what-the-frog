@@ -23,7 +23,7 @@ from .poly import RockPoly
 from .level_loader import load_level, NoSuchLevel
 from .screenshot import take_screenshot
 from . import sounds
-from .level_select import LevelSelectScreen, LEVELS
+from .level_select import LevelSelectScreen, LEVELS, progress
 
 
 SCREENSHOTS = True
@@ -139,6 +139,7 @@ class Level:
         self.state = LevelState.PERFECT
         sounds.play('orchhit3')
         hud.show_card('3star')
+        progress.set_stars(self.name, slowmo, 3)
 
     def fail(self, *_):
         if self.state is not LevelState.PLAYING:
@@ -148,10 +149,12 @@ class Level:
         if flies_remaining == 1:
             hud.show_card('2star')
             sounds.play('orchhit2')
+            progress.set_stars(self.name, slowmo, 2)
             self.state = LevelState.WON
         elif flies_remaining == 2:
             hud.show_card('1star')
             sounds.play('orchhit1')
+            progress.set_stars(self.name, slowmo, 1)
             self.state = LevelState.WON
         else:
             self.state = LevelState.FAILED

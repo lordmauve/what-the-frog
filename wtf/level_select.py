@@ -1,10 +1,12 @@
+import json
+
 from pymunk import Vec2d
 import pyglet.graphics
 import pyglet.sprite
 import pyglet.clock
 
 from .directions import Direction
-from . import ASSETS_PATH
+from . import ASSETS_PATH, SAVE_PATH
 from .sprites import load_centered
 from .actors import actor_sprites
 from .level_loader import NoSuchLevel
@@ -48,7 +50,34 @@ class LevelList:
             raise NoSuchLevel("You have won") from None
 
 
+class LevelProgress:
+    def __init__(self):
+        if SAVE_PATH.exists():
+            self.progress = json.loads(SAVE_PATH.read_text())
+        else:
+            self.progress = {
+                'easy': {},
+                'normal': {},
+            }
+
+    def get_stars(self, level, slowmo):
+        k = 'easy' if slowmo else 'normal'
+        try:
+            return self.progress[k][level]
+        except KeyError:
+            return 0
+
+    def set_stars(self, level, slowmo, value):
+        k = 'easy' if slowmo else 'normal'
+        d = self.progress[k]
+        if d.get(level, 0) >= value:
+            return
+        d[level] = value
+        SAVE_PATH.write_text(json.dumps(self.progress))
+
+
 LEVELS = LevelList()
+progress = LevelProgress()
 
 
 class HopTween:
@@ -64,7 +93,7 @@ class HopTween:
         self.target_pos = Vec2d(*target_pos)
 
         self.t = 0
-        pyglet.clock.schedule_once(self.update, 1 / 60)
+        pyglet.clock.schedule(self.update)
 
     def update(self, dt):
         if not self.sprite:
@@ -75,6 +104,7 @@ class HopTween:
             self.sprite.position = (x - self.screen.offset, y)
             self.sprite.real_x = x
             self.sprite.scale = 1
+            pyglet.clock.unschedule(self.update)
             return
 
         frac = self.t / self.duration
@@ -86,7 +116,6 @@ class HopTween:
             scale=scale
         )
         self.sprite.real_x = x
-        pyglet.clock.schedule_once(self.update, 1 / 60)
 
     def stop(self):
         self.sprite = None
@@ -95,7 +124,8 @@ class HopTween:
 
 class LevelSelectScreen:
     basegroup = pyglet.graphics.OrderedGroup(0)
-    cursorgroup = pyglet.graphics.OrderedGroup(1)
+    stargroup = pyglet.graphics.OrderedGroup(1)
+    cursorgroup = pyglet.graphics.OrderedGroup(2)
 
     def __init__(self, window, slowmo=False):
         self.slowmo = slowmo
@@ -130,19 +160,51 @@ class LevelSelectScreen:
             s.real_x = s.x
         self.tween = HopTween(self, self.frog)
 
+        star_imgs = [
+            load_centered('locked', 'ui'),
+            load_centered('1star', 'ui'),
+            load_centered('2stars', 'ui'),
+            load_centered('3stars', 'ui'),
+        ]
+        stars = 1
+        locked = False
+
+        self.unlocked = {0}
+
         for i, level in enumerate(LEVELS, start=1):
             x, y = self.screen_pos(i)
-            s = pyglet.sprite.Sprite(
-                load_centered(level, 'levelthumbs'),
+            if not stars:
+                locked = True
+            else:
+                stars = progress.get_stars(level, self.slowmo)
+                self.unlocked.add(i)
+
+            if locked:
+                img = star_imgs[0]
+            else:
+                img = load_centered(level, 'levelthumbs')
+
+            levsprite = pyglet.sprite.Sprite(
+                img,
                 x, y,
                 batch=actor_sprites,
                 group=self.basegroup,
             )
-            s.real_x = x
-            s.scale = 2
-            self.sprites.append(s)
+            levsprite.real_x = x
+            levsprite.scale = 2
+            self.sprites.append(levsprite)
 
-        self.max_offset = s.x - window.width + 400
+            if stars:
+                starsprite = pyglet.sprite.Sprite(
+                    star_imgs[stars],
+                    x, y,
+                    batch=actor_sprites,
+                    group=self.stargroup,
+                )
+                starsprite.real_x = x
+                self.sprites.append(starsprite)
+
+        self.max_offset = x - window.width + 400
         self.cursor = 0
 
     def jump(self, direction):
@@ -186,12 +248,12 @@ class LevelSelectScreen:
             else:
                 newcursor -= 3
 
-        if newcursor != self.cursor and 0 <= newcursor <= len(LEVELS):
+        if newcursor != self.cursor and newcursor in self.unlocked:
             self.cursor = newcursor
             sounds.play('ribbit')
 
             x, y = self.screen_pos(self.cursor)
-            frog_offset = x - self.screen_pos(0)[0]
+            frog_offset = x - self.screen_pos(0)[0] - self.window.width // 2
             self.target_offset = min(self.max_offset, max(0, frog_offset))
             self.tween.go((x, y))
 

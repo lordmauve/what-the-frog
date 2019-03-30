@@ -12,3 +12,6 @@ pyglet.resource.reindex()
 
 
 PIXEL_SCALE = 0.5  # Scale down for non-hidpi screens
+
+# File where progress is saved
+SAVE_PATH = root / '.save.json'
