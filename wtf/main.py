@@ -150,6 +150,7 @@ class Level:
         if self.state is not LevelState.PLAYING:
             return
         self.state = LevelState.PERFECT
+        sounds.play('orchhit3')
         hud.show_card('3star')
 
     def fail(self, *_):
@@ -159,15 +160,19 @@ class Level:
         flies_remaining = len(Fly.insts)
         if flies_remaining == 1:
             hud.show_card('2star')
+            sounds.play('orchhit2')
             self.state = LevelState.WON
         elif flies_remaining == 2:
             hud.show_card('1star')
+            sounds.play('orchhit1')
             self.state = LevelState.WON
         else:
             self.state = LevelState.FAILED
+            sounds.play('fail')
             hud.show_card('fail')
 
     def create(self):
+        global slowmo
         self.state = LevelState.PLAYING
         self.pc = None
         self.objs = []
@@ -179,6 +184,8 @@ class Level:
             self.pc = Frog(6, 7)
         controls.reset()
         controls.pc = self.pc
+        sounds.play('ribbit')
+        slowmo = False
 
     def set_background(self, name):
         try:
@@ -307,6 +314,8 @@ class JumpController:
 
     def jump(self, direction):
         """Request a jump in the given direction."""
+        if level.state is not LevelState.PLAYING:
+            return
         if self.available[direction]:
             pc = self.level.pc
             pc.body.velocity = self.JUMP_IMPULSES[direction]
@@ -322,6 +331,7 @@ class JumpController:
             if not any(self.available.values()):
                 pyglet.clock.schedule_once(self.level.fail, 1.3)
         else:
+            sounds.play('no', volume=0.2)
             self.hud.warn_unavailable(direction)
 
 
@@ -375,6 +385,9 @@ class TitleScreen:
         window.push_handlers(self)
 
     def on_key_press(self, symbol, modifiers):
+        if symbol == pyglet.window.key.F12:
+            take_screenshot(window)
+            return
         if symbol == pyglet.window.key.ESCAPE:
             exit()
         GameModeScreen().start()
@@ -394,6 +407,10 @@ class GameModeScreen:
         window.push_handlers(self)
 
     def on_key_press(self, symbol, modifiers):
+        if symbol == pyglet.window.key.F12:
+            take_screenshot(window)
+            return
+
         if symbol == pyglet.window.key.ESCAPE:
             TitleScreen().start()
         elif symbol in (self.EASY, self.NORMAL):

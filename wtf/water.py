@@ -207,7 +207,7 @@ class Water:
         else:
             body.underwater = UnderwaterState.UNDERWATER
 
-        buoyancy = BUOYANCY * bb.area()
+        buoyancy = getattr(body, 'buoyancy', None) or BUOYANCY * bb.area()
         drag = -body.velocity * WATER_DRAG
 
         # Both buoyancy and drag are scaled by how immersed we are

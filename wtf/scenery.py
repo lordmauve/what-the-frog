@@ -4,6 +4,7 @@ import pymunk
 import pyglet.resource
 import pyglet.sprite
 import pyglet.graphics
+from pymunk import Vec2d
 
 from .geom import phys_to_screen, SPACE_SCALE
 from .sprites import load_centered
@@ -60,7 +61,8 @@ class Lilypad(Scenery):
         self.sprite = pyglet.sprite.Sprite(self.SPRITE, batch=actor_sprites)
         self.sprite.position = phys_to_screen(x, y)
 
-        self.body = pymunk.Body(10, pymunk.inf)
+        self.body = pymunk.Body(40, pymunk.inf)
+        self.body.buoyancy = Vec2d(0, 2600)
         self.body.position = (x, y)
         self.shape = cbox(
             self.body,
