@@ -1,10 +1,9 @@
 # flake8: noqa
 import sys
 
-if sys.version_info < (3, 7):
+if sys.version_info < (3, 6):
     sys.exit(
-        "This game requires Python 3.7 or later. "
-        "(Just for a dataclass or two; should be a quick port to Python 3.6)."
+        "This game requires Python 3.6 or later."
     )
 
 
