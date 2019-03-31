@@ -3,6 +3,26 @@ What The Frog?
 
 A game of jumping with limited moves.
 
+Guide the frog to collect flies and fish. (Frogs eat small fish, worms, and
+all kinds of other things, not just flies!)
+
+
+Playing the game
+----------------
+
+Controls are displayed in the game.
+
+I prefer the QWE/ASD controls but this takes some getting used to.
+
+
+Installation
+------------
+
+Everything you need can be installed with pip (and I believe everything is
+available cross-platform):
+
+    pip install -r requirements.txt
+
 
 Authors
 -------
