@@ -4,3 +4,6 @@ devnotes
 *.swp
 grabs
 source/*.zip
+assets/levelpics
+source/sounds
+.save.json

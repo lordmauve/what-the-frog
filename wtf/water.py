@@ -79,6 +79,7 @@ class WaterBatch:
         self.t = 0
         self.mvp_uniform = self.water_shader.get('mvp', None)
         self.t_uniform = self.water_shader.get('t', None)
+        self.tex_uniform = self.water_shader.get('diffuse', None)
 
     def render(self, dt, mvp):
         if not Water.insts:

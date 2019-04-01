@@ -257,7 +257,8 @@ def on_draw(dt):
         dtype='f4'
     )
 
-    with offscreen.bind_texture():
+    with offscreen.bind_texture(location=0):
+        water_batch.tex_uniform.value = 0
         water_batch.render(dt, mvp)
     gl.glUseProgram(0)
 

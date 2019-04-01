@@ -67,8 +67,8 @@ class OffscreenBuffer:
             self.vao.render(moderngl.TRIANGLE_STRIP)
 
     @contextmanager
-    def bind_texture(self):
-        self.fbuf.color_attachments[0].use()
+    def bind_texture(self, location=0):
+        self.fbuf.color_attachments[0].use(location=location)
         yield
 
     @contextmanager
