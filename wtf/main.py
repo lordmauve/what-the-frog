@@ -261,6 +261,7 @@ def on_draw(dt):
         water_batch.tex_uniform.value = 0
         water_batch.render(dt, mvp)
     gl.glUseProgram(0)
+    gl.glBindVertexArray(0)
 
     hud.draw()
 
