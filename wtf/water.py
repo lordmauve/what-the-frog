@@ -1,5 +1,6 @@
 from math import copysign
 
+from pyglet import gl
 import numpy as np
 import moderngl
 
@@ -17,12 +18,15 @@ class WaterBatch:
                 #version 130
 
                 in vec2 vert;
-                in float depth;
+
+                //in float depth;
 
                 uniform mat4 mvp;
+                /*
                 varying vec2 uv;
                 varying vec2 refl_uv;
                 varying float vdepth;
+                */
 
                 vec2 uv_pos(vec4 position) {
                     return (position.xy + vec2(1, 1)) * 0.5;
@@ -30,25 +34,32 @@ class WaterBatch:
 
                 void main() {
                     gl_Position = mvp * vec4(vert, 0.0, 1.0);
+
+                    /*
                     uv = uv_pos(gl_Position);
+
 
                     vdepth = depth;
                     vec4 refl_pos = vec4(vert.x, vert.y + 2 * depth, 0, 1.0);
                     refl_uv = uv_pos(mvp * refl_pos);
+                    */
                 }
             ''',
             fragment_shader='''
                 #version 130
 
+                /*
                 varying vec2 uv;
                 varying vec2 refl_uv;
                 varying float vdepth;
                 uniform float t;
                 uniform sampler2D diffuse;
-                out vec3 f_color;
+                */
+                out vec4 f_color;
 
                 void main() {
-                    float offx = 2 * cos(uv.y + 0.2 * t) +
+                /*
+                  float offx = 2 * cos(uv.y + 0.2 * t) +
                                 sin(3 * sin(60.0 * uv.x) + 0.5 * t);
                     float offy = 2 * cos(uv.x + 107 + 0.3 * t) + sin(
                         sin(60.0 * uv.y + 1.23 + 0.6 * t)
@@ -63,10 +74,12 @@ class WaterBatch:
                     vec3 diff = texture(diffuse, offset_uv).rgb;
                     float refl_amount = 0.6 / (pow(vdepth * 2, 2) + 1);
 
-                    vec3 refl_diff = texture(diffuse, refl_uv).rgb;
+                    //vec3 refl_diff = texture(diffuse, refl_uv).rgb;
 
-                    f_color = diff * 0.55 + vec3(0.1, 0.15, 0.2)
-                              + refl_diff * refl_amount;
+                    //f_color = diff * 0.55 + vec3(0.1, 0.15, 0.2)
+                    //          + refl_diff * refl_amount;
+                */
+                    f_color = vec4(0.2, 0.2, 0.6, 0.3);
                 }
             ''',
         )
@@ -74,7 +87,7 @@ class WaterBatch:
             self.water_shader,
             self.water_verts,
             'vert',
-            'depth',
+            #'depth',
         )
         self.t = 0
         self.mvp_uniform = self.water_shader.get('mvp', None)
@@ -89,7 +102,7 @@ class WaterBatch:
             np.zeros(len(all_water) // 2),
             all_water[::2, 1] - all_water[1::2, 1]
         ], axis=1).reshape((-1, 1))
-        all_water = np.concatenate([all_water, depths], axis=1)
+        #all_water = np.concatenate([all_water, depths], axis=1)
         all_water = all_water.reshape(-1).astype('f4').tobytes()
 
         if self.water_verts.size != len(all_water):
@@ -98,13 +111,14 @@ class WaterBatch:
                 self.water_shader,
                 self.water_verts,
                 'vert',
-                'depth',
+            #    'depth',
             )
         else:
             self.water_verts.write(all_water)
 
         self.mvp_uniform.write(mvp.tobytes())
-        self.t_uniform.value = self.t
+        #self.t_uniform.value = self.t
+        gl.glEnable(gl.GL_BLEND)
         self.water_vao.render(moderngl.TRIANGLE_STRIP)
 
 

@@ -213,7 +213,7 @@ class Level:
 fps_display = pyglet.clock.ClockDisplay()
 
 
-offscreen = OffscreenBuffer(WIDTH, HEIGHT, mgl)
+#offscreen = OffscreenBuffer(WIDTH, HEIGHT, mgl)
 
 
 water_batch = WaterBatch(mgl)
@@ -238,17 +238,14 @@ def on_draw(dt):
 
     window.clear()
 
-    with offscreen.bind_buffer() as fbuf:
-        fbuf.clear(0.13, 0.1, 0.1)
-        gl.glLoadIdentity()
-        gl.glScalef(PIXEL_SCALE, PIXEL_SCALE, 1)
-        level.background.draw()
-        RockPoly.batch.draw()
-        actor_sprites.draw()
-        level.fg_batch.draw()
-
-    mgl.screen.clear()
-    offscreen.draw()
+    #mgl.screen.clear()
+    gl.glUseProgram(0)
+    gl.glLoadIdentity()
+    gl.glScalef(PIXEL_SCALE, PIXEL_SCALE, 1)
+    level.background.draw()
+    RockPoly.batch.draw()
+    actor_sprites.draw()
+    level.fg_batch.draw()
 
     mvp = Matrix44.orthogonal_projection(
         0, WIDTH * SPACE_SCALE,
@@ -257,9 +254,7 @@ def on_draw(dt):
         dtype='f4'
     )
 
-    with offscreen.bind_texture():
-        water_batch.render(dt, mvp)
-    gl.glUseProgram(0)
+    water_batch.render(dt, mvp)
 
     hud.draw()
 
