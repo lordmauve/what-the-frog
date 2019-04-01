@@ -27,7 +27,7 @@ from . import sounds
 from .level_select import LevelSelectScreen, LEVELS, progress
 
 
-SCREENSHOTS = True
+SCREENSHOTS = False
 
 
 WIDTH = 1600   # Width in hidpi pixels
