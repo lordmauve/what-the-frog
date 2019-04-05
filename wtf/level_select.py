@@ -13,6 +13,7 @@ from .actors import actor_sprites
 from .level_loader import NoSuchLevel
 from .keys import KeyInputHandler
 from . import sounds
+from . import PIXEL_SCALE
 
 
 START_LEVEL = "easy1"
@@ -139,7 +140,7 @@ class LevelSelectScreen:
             pyglet.sprite.Sprite(
                 load_centered('level-select', 'ui'),
                 x=300,
-                y=window.height - 80,
+                y=window.height / PIXEL_SCALE - 80,
                 batch=actor_sprites,
                 group=self.basegroup,
             ),
@@ -260,7 +261,7 @@ class LevelSelectScreen:
 
     def screen_pos(self, i):
         """Screen pos for the level at index i."""
-        top = self.window.height - 320
+        top = self.window.height / PIXEL_SCALE - 320
         left = 200
         yspacing = 350
         xspacing = yspacing * 3 ** 0.5 / 2
